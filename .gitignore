@@ -6,3 +6,15 @@
 .DS_Store
 /build
 /captures
+gradlew
+gradlew.bat
+.idea/.name
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+.idea/copyright/profiles_settings.xml
+app/app-release.apk
