@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#3F51B5</color>
+	<color name="colorPrimaryDark">#303F9F</color>
+	<color name="colorAccent">#2222aa</color>
+	<color name="transparent">#00000000</color>
+	<color name="actionbar_primary_background">#333333</color>
+	<color name="dark_grey">#333333</color>
+	<color name="window_background">@color/material_grey_100</color>
+	<color name="grey">#cccccc</color>
+	<!-- Button Primary Background Color -->
+	<color name="button_primary_background">#125320</color>
+	<!-- Button Primary Background Color Focused -->
+	<color name="button_primary_background_focused">#0d561c</color>
+	<!-- Button Primary Background Color Pressed -->
+	<color name="button_primary_background_pressed">#189331</color>
+	<!-- notification dialog button color -->
+	<color name="notification_dialog_button">@color/button_primary_background</color>
+	<color name="grey_dark_light">#777777</color>
+	<color name="black">#000000</color>
+	<color name="red">#ff0000</color>
+	<color name="card_bg">@color/white</color>
+	<color name="app_background">#cccccc</color>
+	<color name="white_grey_dark">#E6E6E6</color>
+	<color name="dark_red">#930000</color>
+	<color name="search_cursor_color">#f4f4f4</color>
+	<color name="blue">#0000ff</color>
+
+</resources>

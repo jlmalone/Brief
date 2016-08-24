@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+		xmlns:card_view="http://schemas.android.com/apk/res-auto"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_marginBottom="16dp"
+		android:clickable="true"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+		android:foreground="?android:attr/selectableItemBackground"
+		android:layout_height="wrap_content"
+		card_view:cardCornerRadius="@dimen/cardview_default_radius"
+		card_view:cardElevation="@dimen/card_elevation"
+		card_view:cardBackgroundColor="@color/card_bg">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_margin="8dp"
+		android:clickable="false"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+	<TextView
+
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/html"
+			android:foreground="?android:attr/selectableItemBackground"
+
+			android:linksClickable="true"
+			android:textSize="18sp"
+			android:textColor="@color/dark_grey"
+
+			/>
+	<!--android:textColorLink="@color/black"-->
+	<!--android:autoLink="web"-->
+	<!--android:clickable="true"-->
+	<!--android:linksClickable="true"-->
+	<!--android:clickable="true"-->
+
+</LinearLayout></android.support.v7.widget.CardView>
