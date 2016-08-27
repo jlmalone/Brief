@@ -43,7 +43,7 @@ public abstract class WikiFragment extends Fragment
 	private int mIdentifier;
 	private Bundle mPayload;
 	private GenericProgressDialogFragment mProgressDialog;
-	private static boolean mHasShownPowerModal = false;
+//	private static boolean mHasShownPowerModal = false;
 
 
 	public interface ToolbarPropertyCallback
@@ -98,13 +98,6 @@ public abstract class WikiFragment extends Fragment
 		{
 			mErrorDialogFragment.setTargetFragment(this, ERROR_DIALOG_REQUEST_CODE);
 		}
-		reportAnalyticsOnResume();
-		PowerManager pm = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
-		if (!pm.isPowerSaveMode())
-		{
-			mHasShownPowerModal = false;
-		}
-
 	}
 
 	@Override
@@ -556,8 +549,4 @@ public abstract class WikiFragment extends Fragment
 		}
 	}
 
-	public void reportAnalyticsOnResume()
-	{
-		//override to send analytics events
-	}
 }

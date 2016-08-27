@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.util.ArrayUtil;
+import com.techventus.wikipedianews.view.WikiHeaderViewHolder;
 import com.techventus.wikipedianews.view.WikiViewHolder;
 
 
@@ -58,9 +59,20 @@ public class WikiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
 	{
 		final View itemView = holder.itemView;
-		WikiViewHolder vh = (WikiViewHolder) holder;
+		WikiHeaderViewHolder vh = (WikiHeaderViewHolder) holder;
 
 		Logger.v(TAG, "bind view "+mData.get(position).getText());
+
+
+		if(getItemViewType(position)== WikiData.DataType.HEADER.ordinal())
+		{
+			((WikiHeaderViewHolder)holder).bindItem(mData.get(position).getText());
+		}
+		else if (getItemViewType(position)==WikiData.DataType.POST.ordinal())
+		{
+			((WikiViewHolder)holder).bindItem(mData.get(position).getText());
+
+		}
 
 		vh.bindItem(mData.get(position).getText());
 	}

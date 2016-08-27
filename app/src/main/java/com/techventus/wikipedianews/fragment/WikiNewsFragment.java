@@ -47,7 +47,7 @@ public class WikiNewsFragment extends WikiFragment
 	public void onViewCreated(View v, Bundle savedInstanceState)
 	{
 		super.onViewCreated(v, savedInstanceState);
-		setTitle(R.string.wikipedia_news);
+		setTitle(R.string.app_name);
 		mLoadingFlipper = (LoadingViewFlipper) v;
 		//Create an empty adapter.
 		mAdapter = new WikiAdapter();//this.getActivity(), null, mNumberColumns);

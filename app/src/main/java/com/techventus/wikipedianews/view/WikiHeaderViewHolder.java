@@ -3,8 +3,8 @@ package com.techventus.wikipedianews.view;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.techventus.wikipedianews.R;
 
@@ -37,6 +37,10 @@ public class WikiHeaderViewHolder extends RecyclerView.ViewHolder
 
 	public void bindItem(final String order)
 	{
+//		mHTMLTextView.superetText(Html.fromHtml(order));
+
+//		Logger.v(TAG, "setTextt text " + Html.fromHtml(order));
 		mHTMLTextView.setText(Html.fromHtml(order));
+		mHTMLTextView.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 }

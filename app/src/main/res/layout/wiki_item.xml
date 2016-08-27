@@ -14,14 +14,19 @@
 		card_view:cardElevation="@dimen/card_elevation"
 		card_view:cardBackgroundColor="@color/card_bg">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical"
-		android:layout_margin="8dp"
+		android:orientation="horizontal"
+		android:layout_marginBottom="8dp"
+		android:layout_marginTop="8dp"
+		android:layout_marginLeft="8dp"
+
 		android:clickable="false"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
+
 	<TextView
 
-			android:layout_width="match_parent"
+			android:layout_width="0dp"
+			android:layout_weight="1"
 			android:layout_height="wrap_content"
 			android:id="@+id/html"
 			android:foreground="?android:attr/selectableItemBackground"
@@ -29,8 +34,16 @@
 			android:linksClickable="true"
 			android:textSize="18sp"
 			android:textColor="@color/dark_grey"
-
 			/>
+	<ImageView
+			android:paddingLeft="4dp"
+			android:paddingBottom="16dp"
+			android:paddingRight="8dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:foreground="?android:attr/selectableItemBackground"
+			android:id="@+id/share"
+			android:src="@drawable/ic_share_black_18dp"/>
 	<!--android:textColorLink="@color/black"-->
 	<!--android:autoLink="web"-->
 	<!--android:clickable="true"-->
