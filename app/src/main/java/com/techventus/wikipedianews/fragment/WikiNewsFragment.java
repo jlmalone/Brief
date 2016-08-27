@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -17,10 +16,7 @@ import com.techventus.wikipedianews.WikiData;
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.view.LoadingViewFlipper;
 
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -57,22 +53,7 @@ public class WikiNewsFragment extends WikiFragment
 
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setAdapter(mAdapter);
-//		mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener()
-//		{
-//			@Override
-//			public void onItemClick(View view, int position)
-//			{
-//				//Because we have headers in the array of items. This click index will be off by the number of headers that are above it.
-//				//We need to get the actual clicked index from the adapter.
-//
-//
-//				Logger.v(TAG, "click item "+position);
-////				mData.get(position).getId();
-//
-//
-//				//TODO open product page
-//			}
-//		}));
+
 
 		getData();
 	}
@@ -206,8 +187,6 @@ public class WikiNewsFragment extends WikiFragment
 		Request request = new Request.Builder()
 				.url("https://en.m.wikipedia.org/wiki/Portal:Current_events")
 				.build();
-//		Call b = request.
-//		request.
 		okHttpClient.newCall(request).enqueue(fetchDataCallback);
 
 
