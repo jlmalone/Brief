@@ -95,7 +95,7 @@ public class WikiNewsFragment extends WikiFragment
 			"Ongoing " +
 				"events"));
 
-		String todayraw = slice1.substring(0,slice1.indexOf("<strong class=\"selflink\">Ongoing"));
+		String todayraw = slice1.substring(0,slice1.indexOf("<div><b><a class=\"mw-selflink selflink\">Ongoing"));
 
 		//Break into LI Array
 		ArrayList<WikiData> lisArrayList = new ArrayList<>();
