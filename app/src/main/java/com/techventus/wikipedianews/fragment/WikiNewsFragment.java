@@ -31,7 +31,7 @@ public class WikiNewsFragment extends WikiFragment
 	private RecyclerView mRecyclerView;
 	private WikiAdapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
-	private ArrayList<String> mData ;
+	private ArrayList<String> mData;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -57,7 +57,6 @@ public class WikiNewsFragment extends WikiFragment
 
 		getData();
 	}
-
 
 
 	private Callback fetchDataCallback = new Callback()
@@ -88,95 +87,88 @@ public class WikiNewsFragment extends WikiFragment
 	{
 		String sample = mPageSource;
 
-		Logger.v(TAG, "SAMPLE IS "+sample);
+		Logger.v(TAG, "SAMPLE IS " + sample);
 		//Everything after In the News
 		String slice1 = sample.substring(sample.indexOf("Topics in the news"));
-		slice1 = slice1.substring(0,slice1.indexOf(
-			"Ongoing " +
-				"events"));
+		slice1 = slice1.substring(0, slice1.indexOf("Ongoing " + "events"));
 
-		String todayraw = slice1.substring(0,slice1.indexOf("<div><b><a class=\"mw-selflink selflink\">Ongoing"));
+		String todayraw = slice1.substring(0, slice1.indexOf("<table class=\"infobox\""));
 
 		//Break into LI Array
 		ArrayList<WikiData> lisArrayList = new ArrayList<>();
-		lisArrayList.add(new WikiData("Topics in the News", WikiData.DataType.HEADER));
+//		lisArrayList.add(new WikiData("Topics in the News", WikiData.DataType.HEADER));
 		String[] lis = todayraw.split("<li>");
-		for(int i=1;i<lis.length;i++)
+		for (int i = 1; i < lis.length; i++)
 		{
-			String html = lis[i].substring(0,lis[i].indexOf("</li>"));
-			html = html.replace("a href=\"/","a href=\"https://en.m.wikipedia.org/");
-			lisArrayList.add(new WikiData(html, WikiData.DataType.POST));
-			Logger.v(TAG, "ADD "+html);
+			int indexOf = lis[i].indexOf("</li>");
+			if (lis[i].length() < 4 || (indexOf <= 0 || indexOf > lis[i].length()))
+			{
+				continue;
+			}
+			String html = lis[i].substring(0, indexOf);
+			html = html.replace("a href=\"/", "a href=\"https://en.m.wikipedia.org/");
+//			lisArrayList.add(new WikiData(html, WikiData.DataType.POST));
+			Logger.v(TAG, "ADD " + html);
 		}
 
 		lisArrayList.add(new WikiData("Ongoing", WikiData.DataType.HEADER));
-		String todayOnging = slice1.substring(slice1.indexOf("Ongoing"),slice1.indexOf("Recent deaths"));
+		String todayOnging = sample.substring(sample.indexOf("Ongoing events</th>"), sample.indexOf("#Ongoing_conflicts"));
 
 		String[] lisOutgoing = todayOnging.split("<li>");
 
-		for(int i=1;i<lisOutgoing.length;i++)
+		for (int i = 1; i < lisOutgoing.length; i++)
 		{
-			String html = lisOutgoing[i].substring(0,lisOutgoing[i].indexOf("</li>"));
-			html = html.replace("a href=\"/","a href=\"https://en.m.wikipedia.org/");
+			String html = lisOutgoing[i].substring(0, lisOutgoing[i].indexOf("</li>"));
+			html = html.replace("a href=\"/", "a href=\"https://en.m.wikipedia.org/");
 			lisArrayList.add(new WikiData(html, WikiData.DataType.POST));
-			Logger.v(TAG, "ADD "+html);
+			Logger.v(TAG, "ADD " + html);
 		}
 
 
 		lisArrayList.add(new WikiData("Recent Deaths", WikiData.DataType.HEADER));
-		String recentDeaths = slice1.substring(slice1.indexOf("Recent deaths"),slice1.indexOf("</table>"));
+		String recentDeaths = slice1.substring(slice1.indexOf("Recent deaths"), slice1.indexOf("</table>"));
 		String[] lisDeaths = recentDeaths.split("<li>");
 
-		for(int i=1;i<lisDeaths.length;i++)
+		for (int i = 1; i < lisDeaths.length; i++)
 		{
-			String html = lisDeaths[i].substring(0,lisDeaths[i].indexOf("</li>"));
-			html = html.replace("a href=\"/","a href=\"https://en.m.wikipedia.org/");
+			String html = lisDeaths[i].substring(0, lisDeaths[i].indexOf("</li>"));
+			html = html.replace("a href=\"/", "a href=\"https://en.m.wikipedia.org/");
 			lisArrayList.add(new WikiData(html, WikiData.DataType.POST));
-			Logger.v(TAG, "ADD "+html);
+			Logger.v(TAG, "ADD " + html);
 		}
 
 		String[] days = slice1.split("style=\"display:none;\">Current events of</span> ");
-		for(int i=1;i<days.length;i++)
+		for (int i = 1; i < days.length; i++)
 		{
-			String header = days[i].substring(0,days[i].indexOf("<span style=\"display:none\">"));
+			String header = days[i].substring(0, days[i].indexOf("<span style=\"display:none\">"));
 			lisArrayList.add(new WikiData(header, WikiData.DataType.HEADER));
-
 
 
 			String[] day = days[i].split("<li>");
 
-			if(day!=null && day.length>0)
-				for(int j=1;j<day.length;j++)
+			if (day != null && day.length > 0)
+			{
+				for (int j = 1; j < day.length; j++)
 				{
 					int val = day[j].indexOf("</li>");
-					if(val==-1)
+					if (val == -1)
 					{
 						continue;
 					}
-					String html = day[j].substring(0,val);
-					html = html.replace("a href=\"/","a href=\"https://en.m.wikipedia.org/");
+					String html = day[j].substring(0, val);
+					html = html.replace("a href=\"/", "a href=\"https://en.m.wikipedia.org/");
 					lisArrayList.add(new WikiData(html, WikiData.DataType.POST));
-					Logger.v(TAG, "ADD "+html);
+					Logger.v(TAG, "ADD " + html);
 				}
-
-
+			}
 
 		}
 		String slice2 = slice1.substring(slice1.indexOf("style=\"display:none;\">Current events of</span> "));
 
-
-
-
-
-
-		Logger.v(TAG, "LIS SIZE "+lisArrayList.size());
+		Logger.v(TAG, "LIS SIZE " + lisArrayList.size());
 		mAdapter.updateData(lisArrayList);
 		mAdapter.notifyDataSetChanged();
 		mLoadingFlipper.showContent();
-
-
-
-
 	}
 
 
@@ -184,12 +176,8 @@ public class WikiNewsFragment extends WikiFragment
 	{
 
 		OkHttpClient okHttpClient = new OkHttpClient();
-		Request request = new Request.Builder()
-				.url("https://en.m.wikipedia.org/wiki/Portal:Current_events")
-				.build();
+		Request request = new Request.Builder().url("https://en.m.wikipedia.org/wiki/Portal:Current_events").build();
 		okHttpClient.newCall(request).enqueue(fetchDataCallback);
-
-
 
 	}
 }
