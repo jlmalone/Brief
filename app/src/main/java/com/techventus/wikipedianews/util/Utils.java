@@ -32,8 +32,7 @@ import java.util.TimeZone;
 /**
  * Created by josephmalone on 6/24/15.
  */
-public class Utils
-{
+public class Utils {
 
 	private static final int MIN_PASSWORD_LENGTH = 8;
 	private static final Set<String> ROMAN_NUMERALS;
@@ -54,8 +53,7 @@ public class Utils
 		}
 		catch (ParseException e)
 		{
-			//			Crittercism.logHandledException(e);
-
+//			Crittercism.logHandledException(e);
 		}
 		return -1;
 	}
@@ -75,7 +73,6 @@ public class Utils
 		ROMAN_NUMERALS.add("X");
 
 	}
-
 
 	public static int getPixelScreenHeight(Context context)
 	{
@@ -171,7 +168,6 @@ public class Utils
 		return PhoneNumberUtils.formatNumber(unformattedPhoneNumber);
 	}
 
-
 	public static boolean hasConnectivity()
 	{
 		ConnectivityManager cm = (ConnectivityManager) WikiApplication.getInstance().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -218,7 +214,6 @@ public class Utils
 		return unixTimeFormat(date.getTime() / 1000L, new SimpleDateFormat(dateFormat));
 	}
 
-
 	public static String formatBirthday(final String birthday)
 	{
 		if (!TextUtils.isEmpty(birthday))
@@ -236,7 +231,6 @@ public class Utils
 		return "";
 	}
 
-
 	public static void showKeyboard(final View view)
 	{
 		InputMethodManager inputMethodManager = (InputMethodManager) WikiApplication.getInstance().getApplicationContext().getSystemService(
@@ -250,7 +244,6 @@ public class Utils
 				Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 	}
-
 
 	public static boolean isValidPassword(final CharSequence password)
 	{
@@ -324,7 +317,6 @@ public class Utils
 		}
 	}
 
-
 	//TODO Consider making a Permission Manager Class for things like this.
 	//Returns true if we already have permission otherwise will show the dialog and return false
 
@@ -355,7 +347,6 @@ public class Utils
 		return convertedTime.toLowerCase();
 		//Output will be 10:23am
 	}
-
 
 	public static boolean exceedsUpdateWindow(long windowInterval, long lastCheck)
 	{
@@ -401,18 +392,20 @@ public class Utils
 		return km * 0.621371;
 	}
 
+
 	public static float dpToPx(int dp)
 	{
 		Resources r = WikiApplication.getInstance().getApplicationContext().getResources();
 		return r.getDimensionPixelSize(dp);
 	}
 
+
 	public static boolean isGoogleMapsInstalled()
 	{
 		try
 		{
 			ApplicationInfo info = WikiApplication.getInstance().getApplicationContext().getPackageManager().getApplicationInfo("com.google.android.apps" +
-					".maps",
+							".maps",
 					0);
 			return true;
 		}
@@ -480,7 +473,6 @@ public class Utils
 //		return result.toString();
 //	}
 
-
 	public static String formatCreditCardString(String CCNumber)
 	{
 		if (TextUtils.isEmpty(CCNumber))
@@ -499,6 +491,7 @@ public class Utils
 		}
 		return output.toString();
 	}
+
 
 	public static String unformatCreditCardString(final String input)
 	{
@@ -569,42 +562,42 @@ public class Utils
 
 		WikiCookieManager.getInstance().saveCookiesIfNeeded();
 	}
-	//
-	//	public static int getImageWidth(int viewWidth)
-	//	{
-	//		ConnectivityManager connectivityManager = (ConnectivityManager) WikiApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
-	//		Network[] network = connectivityManager.getAllNetworks();
-	//		boolean wifiOn = false;
-	//		boolean dataOn = false;
-	//		if (network != null && network.length > 0)
-	//		{
-	//			outer:
-	//			for (int i = 0; i < network.length; ++i)
-	//			{
-	//				NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
-	//				if (networkInfo.isConnectedOrConnecting())
-	//				{
-	//					switch (networkInfo.getType())
-	//					{
-	//						case ConnectivityManager.TYPE_WIFI:
-	//							wifiOn = true;
-	//							break outer;
-	//						case ConnectivityManager.TYPE_MOBILE:
-	//							dataOn = true;
-	//							break;
-	//					}
-	//				}
-	//			}
-	//		}
-	//		if (wifiOn)
-	//		{
-	//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_WIFI, viewWidth) : MAX_IMAGE_WIDTH_WIFI;
-	//		}
-	//		else
-	//		{
-	//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_3G, viewWidth) : MAX_IMAGE_WIDTH_3G;
-	//		}
-	//	}
+//
+//	public static int getImageWidth(int viewWidth)
+//	{
+//		ConnectivityManager connectivityManager = (ConnectivityManager) WikiApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+//		Network[] network = connectivityManager.getAllNetworks();
+//		boolean wifiOn = false;
+//		boolean dataOn = false;
+//		if (network != null && network.length > 0)
+//		{
+//			outer:
+//			for (int i = 0; i < network.length; ++i)
+//			{
+//				NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
+//				if (networkInfo.isConnectedOrConnecting())
+//				{
+//					switch (networkInfo.getType())
+//					{
+//						case ConnectivityManager.TYPE_WIFI:
+//							wifiOn = true;
+//							break outer;
+//						case ConnectivityManager.TYPE_MOBILE:
+//							dataOn = true;
+//							break;
+//					}
+//				}
+//			}
+//		}
+//		if (wifiOn)
+//		{
+//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_WIFI, viewWidth) : MAX_IMAGE_WIDTH_WIFI;
+//		}
+//		else
+//		{
+//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_3G, viewWidth) : MAX_IMAGE_WIDTH_3G;
+//		}
+//	}
 
 	public static String optimizeUrl(
 			final String url, int requiredWidth)
@@ -628,5 +621,4 @@ public class Utils
 		String optimized = (index > 0 ? url.substring(0, index) : url) + "?wid=" + requiredWidth + "&hei=" + requiredHeight;
 		return cropAndAlign ? optimized + "&fit=crop&align=0,0" : optimized;
 	}
-
 }

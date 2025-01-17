@@ -1,7 +1,7 @@
 package com.techventus.wikipedianews.view;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView; // Changed import
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -16,11 +16,10 @@ import java.util.Locale;
  */
 public class WikiHeaderViewHolder extends RecyclerView.ViewHolder
 {
-//	private final ImageView mUserThumbImageView;
+	//	private final ImageView mUserThumbImageView;
 	private View mPlaceholder;
 
 	private final TextView mHTMLTextView;
-
 
 	private final Context mContext;
 	Locale locale = new Locale("en", "US");
@@ -32,7 +31,6 @@ public class WikiHeaderViewHolder extends RecyclerView.ViewHolder
 		mContext = context;
 //		mUserThumbImageView = (ImageView)view.findViewById(R.id.user_image);
 		mHTMLTextView = (TextView)view.findViewById(R.id.html);
-
 	}
 
 	public void bindItem(final String order)

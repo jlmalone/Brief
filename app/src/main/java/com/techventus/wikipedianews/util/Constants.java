@@ -1,17 +1,14 @@
 package com.techventus.wikipedianews.util;
 
 import android.Manifest;
-import android.support.v4.util.SimpleArrayMap;
+import androidx.collection.SimpleArrayMap; // Changed import
 
 import java.net.HttpURLConnection;
 
-
 public class Constants
 {
-//	Error Response Codes for Config API
+	//	Error Response Codes for Config API
 	public static final int API_UNDEFINED_ERROR = HttpURLConnection.HTTP_BAD_REQUEST;
-
-
 
 	public static final String DEFAULT_USER_ID = "USER_ID";
 	//Sometimes the API returns "null" as a value. use this to compare
@@ -34,7 +31,7 @@ public class Constants
 	public static final String FILTER_SORT = "FILTER_SORT";
 	public static final String FILTER_SELECTED_ITEM_STRING = "FILTER_SELECTED_ITEM_STRING";
 
-//	Store locator
+	//	Store locator
 	public static final String LOC_SEARCH_STRING_KEY = "LOC_SEARCH_STRING_KEY";
 	public static final int TWO_PAGES_OFFSCREEN = 2;
 
@@ -47,33 +44,20 @@ public class Constants
 	public static final int MIN_BAG_QUANTITY = 1;
 	public static final int MAX_BAG_QUANTITY = 10;
 
-
 	//Bundle Key. Normally we keep these local and private to the Activities
 	//and fragments, but this one is used extensively
 
-
-
 //	public static final int WALLET_ENVIRONMENT = WalletConstants.ENVIRONMENT_TEST;
-
-
 
 	public static final SimpleArrayMap<String, String> REGION_LOCALE_MAP = new SimpleArrayMap<>();
 
-
-
-
-
-
-
 	public static final String GOOGLE_PLAY_MARKET_URI = "market://details?id=";
 	public static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=";
-
 
 	public static final String STORE_LOCATOR = "storelocator";
 	public static final String MAP = "map";
 	public static final String LIST = "list";
 	public static final String LOCATION = "location";
-
 
 	public static final int CVV_LENGTH_3 = 3;
 	public static final int CVV_LENGTH_4 = 4;

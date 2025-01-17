@@ -1,6 +1,9 @@
 package com.techventus.wikipedianews;
 
 import android.app.Application;
+
+import androidx.multidex.BuildConfig;
+
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.logging.Toaster;
 import com.techventus.wikipedianews.manager.PreferencesManager;

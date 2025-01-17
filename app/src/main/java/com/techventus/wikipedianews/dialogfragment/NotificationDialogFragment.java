@@ -9,10 +9,14 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment; // Updated import
 import com.techventus.wikipedianews.R;
+
 import org.apache.commons.lang3.StringUtils;
 
-public class NotificationDialogFragment extends BaseDialogFragment
+public class NotificationDialogFragment extends DialogFragment
 {
 	public static final int ICON_NONE = 0;
 	public static final int ICON_ALERT = 1;
@@ -51,7 +55,7 @@ public class NotificationDialogFragment extends BaseDialogFragment
 	 * @return the requested fragment
 	 */
 	public static NotificationDialogFragment newInstance(int titleResourceId, int messageResourceId, int positiveButtonResourceId,
-			int negativeButtonResourceId)
+														 int negativeButtonResourceId)
 	{
 		return newInstance(ICON_NONE, titleResourceId, messageResourceId, positiveButtonResourceId, negativeButtonResourceId);
 	}
@@ -66,7 +70,7 @@ public class NotificationDialogFragment extends BaseDialogFragment
 	 * @return the requested fragment
 	 */
 	public static NotificationDialogFragment newInstance(int iconType, int titleResourceId, int messageResourceId,
-			int positiveButtonResourceId, int negativeButtonResourceId)
+														 int positiveButtonResourceId, int negativeButtonResourceId)
 	{
 		NotificationDialogFragment fragment = new NotificationDialogFragment();
 
@@ -102,7 +106,7 @@ public class NotificationDialogFragment extends BaseDialogFragment
 	 * @return the requested fragment
 	 */
 	public static NotificationDialogFragment newInstance(String title, String message, String positiveButton,
-			String negativeButton)
+														 String negativeButton)
 	{
 		return newInstance(ICON_NONE, title, message, positiveButton, negativeButton);
 	}
@@ -117,7 +121,7 @@ public class NotificationDialogFragment extends BaseDialogFragment
 	 * @return the requested fragment
 	 */
 	public static NotificationDialogFragment newInstance(int iconType, String title, String message,
-			String positiveButton, String negativeButton)
+														 String positiveButton, String negativeButton)
 	{
 		NotificationDialogFragment fragment = new NotificationDialogFragment();
 
@@ -135,6 +139,7 @@ public class NotificationDialogFragment extends BaseDialogFragment
 		return fragment;
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
@@ -186,18 +191,22 @@ public class NotificationDialogFragment extends BaseDialogFragment
 		}
 		textView = (TextView) view.findViewById(R.id.dialog_body);
 		textView.setText(message);
-		builder.setPositiveButton(positiveButton, getPositiveButtonClick());
+		builder.setPositiveButton(positiveButton, (dialog, which) -> { // Inline the OnClickListener
+			if (getTargetFragment() != null) {
+				Intent intent = getPositveButtonIntent(); // Call the Intent method
+				if(intent == null)
+				{
+					intent = new Intent(); // create a new intent if there is no intent returned.
+				}
+				getTargetFragment().onActivityResult(getTargetRequestCode(), POSITIVE_BUTTON, intent);
+			}
+		});
 		if (!TextUtils.isEmpty(negativeButton))
 		{
-			builder.setNegativeButton(negativeButton, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+			builder.setNegativeButton(negativeButton, (dialog, which) -> {
+				if (getTargetFragment() != null)
 				{
-					if (getTargetFragment() != null)
-					{
-						getTargetFragment().onActivityResult(getTargetRequestCode(), NEGATIVE_BUTTON, getNegativeButtonIntent());
-					}
+					getTargetFragment().onActivityResult(getTargetRequestCode(), NEGATIVE_BUTTON, getNegativeButtonIntent());
 				}
 			});
 		}
@@ -205,37 +214,9 @@ public class NotificationDialogFragment extends BaseDialogFragment
 		AlertDialog alertDialog = builder.create();
 		alertDialog.setCanceledOnTouchOutside(false);
 		alertDialog.setCancelable(false);
-		alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
-			{
-				@Override
-				public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
-				{
-					return keyCode == KeyEvent.KEYCODE_BACK;
-				}
-			});
+		alertDialog.setOnKeyListener((dialog, keyCode, event) -> keyCode == KeyEvent.KEYCODE_BACK);
 
 		return alertDialog;
-	}
-
-	/**
-	 * Click Listener for the positive button. This method exists independently to
-	 * be overriden and perform additional functionality
-	 *
-	 * @return
-	 */
-	protected DialogInterface.OnClickListener getPositiveButtonClick()
-	{
-		return new DialogInterface.OnClickListener()
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				if (getTargetFragment() != null)
-				{
-					getTargetFragment().onActivityResult(getTargetRequestCode(), POSITIVE_BUTTON, getPositveButtonIntent());
-				}
-			}
-		};
 	}
 
 	/**
@@ -257,4 +238,6 @@ public class NotificationDialogFragment extends BaseDialogFragment
 	{
 		return null;
 	}
+
 }
+

@@ -1,56 +1,78 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
-    useLibrary 'org.apache.http.legacy'
+    namespace "com.techventus.wikipedianews"
+    compileSdkVersion 35
 
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.techventus.wikipedianews"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 6
-        versionName "1.5"
+        minSdkVersion 28
+        targetSdkVersion 35
+        versionCode 7
+        versionName "1.6"
     }
     buildTypes {
+        debug {
+            // You can add settings here specific to the debug build.
+            // Example:
+            //  debuggable true
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' // Changed filename
         }
+    }
+
+    productFlavors {
+        debug {
+            applicationIdSuffix ".debug"
+            // Additional settings for debug build
+            buildConfigField 'boolean', 'USE_HARDCODED_DATA', 'true'
+        }
+        release {
+            // Settings for release build
+
+            buildConfigField 'boolean', 'USE_HARDCODED_DATA', 'false'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+
+    // Add this block to specify the Kotlin JVM target
+    kotlinOptions {
+        jvmTarget = '17'
     }
 }
 
 dependencies {
-    repositories {
-        jcenter()
-        mavenCentral()
-        flatDir {
-            dirs 'libs'
-        }
-    }
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.squareup.okhttp:logging-interceptor:2.7.0'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
-    compile 'com.squareup.okhttp:okhttp:2.6.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.6.0'
-    compile 'com.android.support:design:23.4.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
-    compile 'com.android.support:support-v13:+'
-    compile 'com.android.support:percent:23.0.1'
-    compile 'com.android.support:design:23.0.1'
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:cardview-v7:23.0.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.github.bumptech.glide:okhttp-integration:1.3.1@aar'
-    compile 'com.android.support:support-v13:+'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    // Updated support libraries to AndroidX
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.percentlayout:percentlayout:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
+    // Updated networking libraries
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    // Updated Glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // Other dependencies
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    testImplementation 'junit:junit:4.13.2'
 }

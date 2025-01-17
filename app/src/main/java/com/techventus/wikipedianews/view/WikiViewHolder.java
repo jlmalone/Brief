@@ -3,7 +3,6 @@ package com.techventus.wikipedianews.view;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.ContactsContract;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;

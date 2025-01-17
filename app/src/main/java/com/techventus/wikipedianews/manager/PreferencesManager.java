@@ -17,6 +17,7 @@ public class PreferencesManager
 	private static final String PREF_COOKIE_MAP = "PREF_COOKIE_MAP";
 
 	private static final String PREF_LOGGING_ENABLED = "PREF_LOGGING_ENABLED";
+	private static final String PREF_DEBUG_MODE_ENABLED = "PREF_DEBUG_MODE_ENABLED"; // Added debug mode preference
 
 	private static volatile PreferencesManager mInstance;
 	private final SharedPreferences mPreferences;
@@ -87,5 +88,16 @@ public class PreferencesManager
 	public void setLoggingEnabled(boolean enabled)
 	{
 		mPreferences.edit().putBoolean(PREF_LOGGING_ENABLED, enabled).apply();
+	}
+
+	// Added new methods for the debug option
+	public boolean isDebugModeEnabled()
+	{
+		return mPreferences.getBoolean(PREF_DEBUG_MODE_ENABLED, false);
+	}
+
+	public void setDebugModeEnabled(boolean enabled)
+	{
+		mPreferences.edit().putBoolean(PREF_DEBUG_MODE_ENABLED, enabled).apply();
 	}
 }

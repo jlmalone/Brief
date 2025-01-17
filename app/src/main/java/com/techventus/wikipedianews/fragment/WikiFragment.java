@@ -1,28 +1,33 @@
 package com.techventus.wikipedianews.fragment;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
-import com.techventus.wikipedianews.BuildConfig;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.snackbar.Snackbar;
+//import com.techventus.wikipedianews.BuildConfig;
 import com.techventus.wikipedianews.R;
 import com.techventus.wikipedianews.dialogfragment.GenericProgressDialogFragment;
 import com.techventus.wikipedianews.dialogfragment.NonDismissableDialogFragment;
 import com.techventus.wikipedianews.dialogfragment.NotificationDialogFragment;
 import com.techventus.wikipedianews.logging.Logger;
+
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class WikiFragment extends Fragment
-{
+/**
+ * Created by josephmalone on 16-08-23.
+ */
+public abstract class WikiFragment extends Fragment {
 	private static final String TAG = WikiFragment.class.getSimpleName();
 	private static final String ERROR_DIALOG_TAG = "wiki_frag_error_dialog";
 	private static final String DIALOG_PAYLOAD_TAG = "payload";
@@ -35,7 +40,7 @@ public abstract class WikiFragment extends Fragment
 	protected static final String ERROR = "ERROR";
 	private static final String GENERIC_ERROR = "GENERIC_ERROR";
 
-//	protected final ApiManager mApiManager = ApiManager.getInstance();
+	// protected final ApiManager mApiManager = ApiManager.getInstance();
 	private String mTitle;
 	private ToolbarPropertyCallback mToolbarCallback;
 	private DialogFragment mErrorDialogFragment;
@@ -43,11 +48,9 @@ public abstract class WikiFragment extends Fragment
 	private int mIdentifier;
 	private Bundle mPayload;
 	private GenericProgressDialogFragment mProgressDialog;
-//	private static boolean mHasShownPowerModal = false;
+	// private static boolean mHasShownPowerModal = false;
 
-
-	public interface ToolbarPropertyCallback
-	{
+	public interface ToolbarPropertyCallback {
 		void setTitle(String title);
 
 		void setNavigationContentDescription(String contentDescription);
@@ -55,56 +58,46 @@ public abstract class WikiFragment extends Fragment
 		void setLogoDescription(String description);
 
 		void setSearchEnabled(boolean enabled);
-
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (savedInstanceState != null)
-		{
+		if (savedInstanceState != null) {
 			mIdentifier = savedInstanceState.getInt(DIALOG_IDENTIFIER_TAG);
 			mPayload = savedInstanceState.getBundle(DIALOG_PAYLOAD_TAG);
 		}
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
-	{
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		setHasOptionsMenu(true);
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState)
-	{
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(DIALOG_IDENTIFIER_TAG, mIdentifier);
-		if (mPayload != null)
-		{
+		if (mPayload != null) {
 			outState.putBundle(DIALOG_PAYLOAD_TAG, mPayload);
 		}
 	}
 
 	@Override
-	public void onResume()
-	{
+	public void onResume() {
 		super.onResume();
 
-		FragmentManager fragmentManager = getFragmentManager();
+		FragmentManager fragmentManager = getParentFragmentManager();
 		mErrorDialogFragment = (DialogFragment) fragmentManager.findFragmentByTag(ERROR_DIALOG_TAG);
-		if (mErrorDialogFragment != null)
-		{
+		if (mErrorDialogFragment != null) {
 			mErrorDialogFragment.setTargetFragment(this, ERROR_DIALOG_REQUEST_CODE);
 		}
 	}
 
 	@Override
-	public void onPause()
-	{
-		if (mErrorDialogFragment != null)
-		{
+	public void onPause() {
+		if (mErrorDialogFragment != null) {
 			mErrorDialogFragment.setTargetFragment(null, 0);
 			mErrorDialogFragment = null;
 		}
@@ -113,158 +106,126 @@ public abstract class WikiFragment extends Fragment
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode)
-		{
-			case ERROR_DIALOG_REQUEST_CODE:
-				mErrorDialogFragment = null;
-				if (mIdentifier == POWER_SAVER_DIALOG_CODE)
-				{
-					if (resultCode == NotificationDialogFragment.POSITIVE_BUTTON)
-					{
-						try
-						{
-							startActivity(new Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS));
-						}
-						catch (Exception e)
-						{
-							//SHPA-599, SHPA-602 - TODO - get HTC and investigate if we can properly request the requisite permission for Battery Saver on HTC
-						}
+		if (requestCode == ERROR_DIALOG_REQUEST_CODE && mErrorDialogFragment != null && mErrorDialogFragment.isAdded()) {
+			mErrorDialogFragment = null;
+			if (mIdentifier == POWER_SAVER_DIALOG_CODE) {
+				if (resultCode == Activity.RESULT_OK) {
+					try {
+						startActivity(new Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS));
+					} catch (Exception e) {
+						// Handle the exception appropriately
+						Logger.e(TAG, "Failed to open Battery Saver settings", e);
 					}
 				}
-				else
-				{
-					onErrorDialogDismissed(mIdentifier, mPayload, resultCode);
-					mPayload = null;
-				}
-				break;
+			} else {
+				onErrorDialogDismissed(mIdentifier, mPayload, resultCode);
+				mPayload = null;
+			}
 		}
 	}
 
-	protected void setTitle(int titleResourceId)
-	{
-		mTitle = getResources().getString(titleResourceId);
-		setTitle(mTitle);
-	}
+//
+//	protected void setTitle(int titleResourceId) {
+//		mTitle = getResources().getString(titleResourceId);
+//		setTitle(mTitle);
+//	}
 
 	/**
 	 * Called when a dialog has been dismissed. To be overridden in child classes
 	 */
-	protected void onErrorDialogDismissed(int identifier, Bundle data, int buttonId)
-	{
+	protected void onErrorDialogDismissed(int identifier, @Nullable Bundle data, int buttonId) {
 	}
 
-	public void handleOnClickForNonDismissableDialogs(int identifier, int buttonId)
-	{
+	public void handleOnClickForNonDismissableDialogs(int identifier, int buttonId) {
 	}
 
-	/**
-	 * Method to set the title of the fragments parent toolbar to the given title.
-	 * if the parent activity does not implement the callback interface this call is ignored.
-	 *
-	 * @param title @NotNull String containing the title that we want to set in the toolbar.
-	 */
-	protected void setTitle(String title)
-	{
-		mTitle = title;
-		if (title != null)
-		{
-			//If the parent activity is registered to receive callbacks. Set the title.
-			if (mToolbarCallback != null)
-			{
-				mToolbarCallback.setTitle(title);
-			}
-		}
-		else
-		{
-			Logger.e(TAG, "Error caller passed null to Set toolbar title");
-			Logger.logStackTrace(TAG, new Exception());
-		}
-	}
-
-
+//	/**
+//	 * Method to set the title of the fragment's parent toolbar to the given title.
+//	 * If the parent activity does not implement the callback interface, this call is ignored.
+//	 *
+//	 * @param title @NotNull String containing the title that we want to set in the toolbar.
+//	 */
+//	@Override
+//	public void setTitle(CharSequence title) {
+//		mTitle = title != null ? Utils.uppercaseWords(title.toString()) : null;
+//		if (title != null) {
+//			// If the parent activity is registered to receive callbacks. Set the title.
+//			if (mToolbarCallback != null) {
+//				mToolbarCallback.setTitle(mTitle);
+//			}
+//		} else {
+//			Logger.e(TAG, "Error: caller passed null to set toolbar title", new Exception());
+//		}
+//	}
 
 	@Override
-	public void onAttach(Context context)
-	{
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
-		//If the activity that hosts this fragment implements the callbacks to set the toolbar properties.
-		//we register it so that we can use them from within the fragment.
-		if (context instanceof ToolbarPropertyCallback)
-		{
+		// If the activity that hosts this fragment implements the callbacks to set the toolbar properties.
+		// we register it so that we can use them from within the fragment.
+		if (context instanceof ToolbarPropertyCallback) {
 			Logger.d(TAG, context + " implements toolbar callbacks. Registering");
 			mToolbarCallback = (ToolbarPropertyCallback) context;
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+
 	@Override
-	public void onAttach(Activity activity)
-	{
+	public void onAttach(@NonNull Activity activity) {
 		super.onAttach(activity);
-		//If the activity that hosts this fragment implements the callbacks to set the toolbar properties.
-		//we register it so that we can use them from within the fragment.
-		if (activity instanceof ToolbarPropertyCallback)
-		{
+		// If the activity that hosts this fragment implements the callbacks to set the toolbar properties.
+		// we register it so that we can use them from within the fragment.
+		if (activity instanceof ToolbarPropertyCallback) {
 			Logger.d(TAG, activity + " implements toolbar callbacks. Registering");
 			mToolbarCallback = (ToolbarPropertyCallback) activity;
 		}
 	}
 
 	@Override
-	public void onDetach()
-	{
+	public void onDetach() {
 		super.onDetach();
-		//If the fragment has been detached from the parent activity then we need to deregister the callback.
-		//If it is reattached later on that will be picked up in onAttach.
+		// If the fragment has been detached from the parent activity then we need to deregister the callback.
+		// If it is reattached later on that will be picked up in onAttach.
 		mToolbarCallback = null;
 	}
 
 	/**
-	 * Called by the activity to check whether the fragment wants to consume a back key presss
+	 * Called by the activity to check whether the fragment wants to consume a back key press
 	 *
 	 * @return true if the event is consumed, false otherwise
 	 */
-	public boolean onBackPressed()
-	{
+	public boolean onBackPressed() {
 		return false;
 	}
 
 	/**
-	 * Shows a snackbar with the app theme
+	 * Shows a Snackbar with the app theme
 	 *
 	 * @param view       The view to find a parent from.
 	 * @param resourceId The resource id of the string resource to use. Can be formatted text.
 	 * @param length     How long to display the message. Either LENGTH_SHORT or LENGTH_LONG
 	 */
-	protected void showSnackBar(final View view, int resourceId, int length)
-	{
+	protected void showSnackBar(@NonNull View view, int resourceId, int length) {
 		showSnackBar(view, resourceId, length, -1);
 	}
 
 	/**
-	 * Shows a snackbar with the app theme
+	 * Shows a Snackbar with the app theme
 	 *
 	 * @param view       The view to find a parent from.
 	 * @param resourceId The resource id of the string resource to use. Can be formatted text.
 	 * @param length     How long to display the message. Either LENGTH_SHORT or LENGTH_LONG
-	 * @param color      background color for the snackbar (resource ID)
+	 * @param color      Background color for the Snackbar (resource ID)
 	 */
-	@SuppressWarnings("deprecation")
-	protected void showSnackBar(final View view, int resourceId, int length, int color)
-	{
+	protected void showSnackBar(@NonNull View view, int resourceId, int length, int color) {
 		Snackbar snackbar = Snackbar.make(view, resourceId, length);
-		if (color > 0)
-		{
+		if (color > 0) {
 			View snackBarView = snackbar.getView();
-			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1)
-			{
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 				snackBarView.setBackgroundColor(getResources().getColor(color, getContext().getTheme()));
-			}
-			else
-			{
+			} else {
 				snackBarView.setBackgroundColor(getResources().getColor(color));
 			}
 		}
@@ -278,20 +239,14 @@ public abstract class WikiFragment extends Fragment
 	 * @param contentDescriptionResourceId @NotNull The Resource ID of the string that we would like to set
 	 *                                     as the content description.
 	 */
-	void setNavigationContentDescription(int contentDescriptionResourceId)
-	{
-		if (mToolbarCallback != null)
-		{
+	void setNavigationContentDescription(int contentDescriptionResourceId) {
+		if (mToolbarCallback != null) {
 			mToolbarCallback.setNavigationContentDescription(getString(contentDescriptionResourceId));
 		}
 	}
 
-
-
-	void setSearchEnabled(boolean enabled)
-	{
-		if (mToolbarCallback != null)
-		{
+	void setSearchEnabled(boolean enabled) {
+		if (mToolbarCallback != null) {
 			mToolbarCallback.setSearchEnabled(enabled);
 		}
 	}
@@ -303,10 +258,8 @@ public abstract class WikiFragment extends Fragment
 	 * @param logoDescriptionResourceId @NotNull The Resource ID of the string that we would like to set
 	 *                                  as the logo description.
 	 */
-	void setLogoDescription(int logoDescriptionResourceId)
-	{
-		if (mToolbarCallback != null)
-		{
+	void setLogoDescription(int logoDescriptionResourceId) {
+		if (mToolbarCallback != null) {
 			mToolbarCallback.setLogoDescription(getString(logoDescriptionResourceId));
 		}
 	}
@@ -316,8 +269,7 @@ public abstract class WikiFragment extends Fragment
 	 *
 	 * @param identifier an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 */
-	protected void showNoNetworkError(int identifier)
-	{
+	protected void showNoNetworkError(int identifier) {
 		showNoNetworkError(identifier, true);
 	}
 
@@ -326,15 +278,11 @@ public abstract class WikiFragment extends Fragment
 	 *
 	 * @param identifier an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 */
-	protected void showNoNetworkError(int identifier, boolean showCancel)
-	{
-		if (showCancel)
-		{
+	protected void showNoNetworkError(int identifier, boolean showCancel) {
+		if (showCancel) {
 			showError(identifier, null, R.string.network_error_title, R.string.network_error_body, R.string.retry_connection, R.string.cancel);
-		}
-		else
-		{
-			showError(identifier, null, R.string.network_error_title, R.string.network_error_body, R.string.retry_connection);
+		} else {
+			showError(identifier, R.string.error_title, R.string.network_error_title, R.string.network_error_body, R.string.retry_connection);
 		}
 	}
 
@@ -344,11 +292,9 @@ public abstract class WikiFragment extends Fragment
 	 * @param identifier an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 * @param data       a bundle that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 */
-	protected void showNoNetworkError(int identifier, final Bundle data)
-	{
+	protected void showNoNetworkError(int identifier, @Nullable Bundle data) {
 		showError(identifier, data, R.string.network_error_title, R.string.network_error_body, R.string.retry_connection, R.string.cancel);
 	}
-
 
 	/**
 	 * Shows a notification error dialog
@@ -358,8 +304,7 @@ public abstract class WikiFragment extends Fragment
 	 * @param bodyResId           the resource ID to use for the dialog message
 	 * @param positiveButtonResId the resource ID to use for the positive button
 	 */
-	protected void showError(int identifier, int titleResId, int bodyResId, int positiveButtonResId)
-	{
+	protected void showError(int identifier, int titleResId, int bodyResId, int positiveButtonResId) {
 		showError(identifier, null, titleResId, bodyResId, positiveButtonResId, -1);
 	}
 
@@ -372,8 +317,7 @@ public abstract class WikiFragment extends Fragment
 	 * @param positiveButtonResId the resource ID to use for the positive button
 	 * @param negativeButtonResId the resource ID to use for the negative button
 	 */
-	public void showError(int identifier, int titleResId, int bodyResId, int positiveButtonResId, int negativeButtonResId)
-	{
+	public void showError(int identifier, int titleResId, int bodyResId, int positiveButtonResId, int negativeButtonResId) {
 		showError(identifier, null, titleResId, bodyResId, positiveButtonResId, negativeButtonResId);
 	}
 
@@ -385,88 +329,10 @@ public abstract class WikiFragment extends Fragment
 	 * @param titleResId          the resource ID to use for the dialog title
 	 * @param bodyResId           the resource ID to use for the dialog message
 	 * @param positiveButtonResId the resource ID to use for the positive button
-	 */
-	protected void showError(int identifier, final Bundle data, int titleResId, int bodyResId, int positiveButtonResId)
-	{
-		showError(identifier, data, titleResId, bodyResId, positiveButtonResId, -1);
-	}
-
-	/**
-	 * @param identifier          an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
-	 * @param data                a bundle that will be returned when the dialog is dismissed via onErrorDialogDismissed
-	 * @param titleString         the dialog title string
-	 * @param bodyString          the dialog body string
-	 * @param positiveButtonResId the resource ID to use for the positive button
-	 */
-	protected void showError(int identifier, final Bundle data, String titleString, String bodyString, int positiveButtonResId)
-	{
-		showError(identifier, data, titleString, bodyString, positiveButtonResId, -1);
-	}
-
-	/**
-	 * @param identifier          an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
-	 * @param data                a bundle that will be returned when the dialog is dismissed via onErrorDialogDismissed
-	 * @param titleString         the dialog title string
-	 * @param bodyString          the dialog body string
-	 * @param positiveButtonResId the resource ID to use for the positive button
 	 * @param negativeButtonResId the resource ID to use for the negative button
 	 */
-	protected void showError(int identifier, final Bundle data, String titleString, String bodyString, int positiveButtonResId, int negativeButtonResId)
-	{
-		genericError(identifier, data, titleString, -1, bodyString, -1, positiveButtonResId, negativeButtonResId);
-	}
-
-	private void genericError(int identifier, final Bundle data, String titleString, int titleResId, String bodyString, int bodyResId, int positiveButtonResId,
-			int negativeButtonResId)
-	{
-		mIdentifier = identifier;
-		mPayload = data;
-		if (mErrorDialogFragment == null)
-		{
-			if ((StringUtils.isNotEmpty(titleString) && titleResId == -1) || (StringUtils.isNotEmpty(bodyString) && bodyResId == -1))
-			{
-				mErrorDialogFragment = NotificationDialogFragment.newInstance(NotificationDialogFragment.ICON_ALERT, titleString, bodyString,
-						getString(positiveButtonResId), negativeButtonResId > 0 ? getString(negativeButtonResId) : null);
-			}
-			else
-			{
-				mErrorDialogFragment = NotificationDialogFragment.newInstance(NotificationDialogFragment.ICON_ALERT, titleResId, bodyResId,
-						positiveButtonResId,
-						negativeButtonResId);
-			}
-			//saw a crash in dev where mErrorDialogFragment was null after being instatiated
-			if (mErrorDialogFragment != null && getFragmentManager() != null)
-			{
-				FragmentManager fragmentManager = getFragmentManager();
-				if (fragmentManager != null)
-				{
-					mErrorDialogFragment.setTargetFragment(this, ERROR_DIALOG_REQUEST_CODE);
-					mErrorDialogFragment.show(fragmentManager, ERROR_DIALOG_TAG);
-				}
-				else
-				{
-					if (BuildConfig.DEBUG)
-					{
-						throw new IllegalStateException("Attempted to display error dialog with null Fragment Manager");
-					}
-				}
-			}
-			else
-			{
-			}
-
-		}
-		else
-		{
-			if (BuildConfig.DEBUG)
-			{
-				//				throw new IllegalStateException("Attempting to display an error dialog when one already exists");
-			}
-			else
-			{
-				Logger.e(TAG, "Attempting to display an error dialog when one already exists");
-			}
-		}
+	protected void showError(int identifier, @Nullable Bundle data, int titleResId, int bodyResId, int positiveButtonResId, int negativeButtonResId) {
+		genericError(identifier, data, null, titleResId, null, bodyResId, positiveButtonResId, negativeButtonResId);
 	}
 
 	/**
@@ -474,79 +340,112 @@ public abstract class WikiFragment extends Fragment
 	 *
 	 * @param identifier          an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 * @param data                a bundle that will be returned when the dialog is dismissed via onErrorDialogDismissed
-	 * @param titleResId          the resource ID to use for the dialog title
-	 * @param bodyResId           the resource ID to use for the dialog message
+	 * @param titleString         the dialog title string
+	 * @param bodyString          the dialog body string
 	 * @param positiveButtonResId the resource ID to use for the positive button
 	 * @param negativeButtonResId the resource ID to use for the negative button
 	 */
-	protected void showError(int identifier, final Bundle data, int titleResId, int bodyResId, int positiveButtonResId, int negativeButtonResId)
-	{
-		genericError(identifier, data, null, titleResId, null, bodyResId, positiveButtonResId, negativeButtonResId);
+	protected void showError(int identifier, @Nullable Bundle data, String titleString, String bodyString, int positiveButtonResId, int negativeButtonResId) {
+		genericError(identifier, data, titleString, -1, bodyString, -1, positiveButtonResId, negativeButtonResId);
 	}
 
 	/**
+	 * Generic error handler to show dialogs
+	 */
+	private void genericError(int identifier, @Nullable Bundle data, String titleString, int titleResId, String bodyString, int bodyResId, int positiveButtonResId,
+							  int negativeButtonResId) {
+		mIdentifier = identifier;
+		mPayload = data;
+		if (mErrorDialogFragment == null) {
+			NotificationDialogFragment dialogFragment;
+			if ((StringUtils.isNotEmpty(titleString) && titleResId == -1) || (StringUtils.isNotEmpty(bodyString) && bodyResId == -1)) {
+				dialogFragment = NotificationDialogFragment.newInstance(
+						NotificationDialogFragment.ICON_ALERT,
+						titleString,
+						bodyString,
+						getString(positiveButtonResId),
+						negativeButtonResId > 0 ? getString(negativeButtonResId) : null
+				);
+			} else {
+				dialogFragment = NotificationDialogFragment.newInstance(
+						NotificationDialogFragment.ICON_ALERT,
+						titleResId,
+						bodyResId,
+						positiveButtonResId,
+						negativeButtonResId
+				);
+			}
+			// Ensure FragmentManager is not null
+			FragmentManager fragmentManager = getParentFragmentManager();
+            mErrorDialogFragment = dialogFragment;
+            mErrorDialogFragment.setTargetFragment(this, ERROR_DIALOG_REQUEST_CODE);
+            mErrorDialogFragment.show(fragmentManager, ERROR_DIALOG_TAG);
+        } else {
+//			if (BuildConfig.DEBUG) {
+//				// Optionally throw exception or handle gracefully
+//				// throw new IllegalStateException("Attempting to display an error dialog when one already exists");
+//			} else {
+//				Logger.e(TAG, "Attempting to display an error dialog when one already exists", new Exception());
+//			}
+		}
+	}
+
+	/**
+	 * Shows a force upgrade error dialog
+	 *
 	 * @param identifier     an integer that will be returned when the dialog is dismissed via onErrorDialogDismissed
 	 * @param titleString    the dialog title string
 	 * @param bodyString     the dialog body string
 	 * @param positiveButton the string to use for the positive button
 	 * @param negativeButton the string to use for the negative button
 	 */
-	public void showForceUpgradeError(int identifier, String titleString, String bodyString, String positiveButton, String negativeButton)
-	{
-		if (mForceUpgradeDialogFragment == null)
-		{
+	public void showForceUpgradeError(int identifier, String titleString, String bodyString, String positiveButton, String negativeButton) {
+		if (mForceUpgradeDialogFragment == null) {
 			mForceUpgradeDialogFragment = NonDismissableDialogFragment.newInstance(titleString, bodyString, positiveButton, negativeButton);
 			mForceUpgradeDialogFragment.setTargetFragment(this, identifier);
-			mForceUpgradeDialogFragment.show(getFragmentManager(), FORCE_UPGRADE_ERROR_DIALOG_TAG);
+			mForceUpgradeDialogFragment.show(getParentFragmentManager(), FORCE_UPGRADE_ERROR_DIALOG_TAG);
 			mForceUpgradeDialogFragment.setCancelable(false);
-		}
-		else
-		{
-			if (BuildConfig.DEBUG)
-			{
-				throw new IllegalStateException("Attempting to display an error dialog when one already exists");
-			}
-			else
-			{
-				Logger.e(TAG, "Attempting to display an error dialog when one already exists");
-			}
+		} else {
+
+//			if (BuildConfig.DEBUG) {
+//				throw new IllegalStateException("Attempting to display an error dialog when one already exists", new Exception());
+//			} else {
+//				Logger.e(TAG, "Attempting to display an error dialog when one already exists", new Exception());
+//			}
 		}
 	}
-
-	/**
-	 * Shows a progress dialog with the prompt as per the resource ID
-	 *
-	 * @param messageResId the resource ID of the prompt to display in the progress dialog
-	 * @param cancelable   whether the user can cancel the dialog
-	 */
-	public void showProgress(int messageResId, boolean cancelable)
-	{
+	public void showProgress(int messageResId, boolean cancelable) {
 		dismissProgress();
-		FragmentManager fragmentManager = getFragmentManager();
-		if (fragmentManager != null)
-		{
+		FragmentManager fragmentManager = getParentFragmentManager();
+		if (fragmentManager != null) {
 			mProgressDialog = GenericProgressDialogFragment.newInstance(messageResId, cancelable);
-			mProgressDialog.show(fragmentManager, PROGRESS_DIALOG_TAG);
-		}
-		else
-		{
-			if (BuildConfig.DEBUG)
+			if(mProgressDialog != null)
 			{
-				throw new IllegalStateException("Attempted to show progress dialog with null Fragment Manager");
+				mProgressDialog.show(fragmentManager, PROGRESS_DIALOG_TAG);
 			}
+			else {
+//				if (BuildConfig.DEBUG) {
+//					throw new IllegalStateException("Attempted to show progress dialog with null Fragment Manager, but dialog was null", new Exception());
+//				} else {
+//					Logger.e(TAG, "Attempted to show progress dialog with null Fragment Manager, but dialog was null", new Exception());
+//				}
+			}
+		} else {
+//			if (BuildConfig.DEBUG) {
+//				throw new IllegalStateException("Attempted to show progress dialog with null Fragment Manager", new Exception());
+//			}
+//			else {
+//				Logger.e(TAG, "Attempted to show progress dialog with null Fragment Manager", new Exception());
+//			}
 		}
 	}
-
 	/**
 	 * Dismisses the progress dialog. Safe to call if no progress dialog is being displayed.
 	 */
-	public void dismissProgress()
-	{
-		if (mProgressDialog != null && mProgressDialog.isAdded())
-		{
+	public void dismissProgress() {
+		if (mProgressDialog != null && mProgressDialog.isAdded() && getParentFragmentManager() != null) {
 			mProgressDialog.dismissAllowingStateLoss();
 			mProgressDialog = null;
 		}
 	}
-
 }

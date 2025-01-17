@@ -2,10 +2,9 @@ package com.techventus.wikipedianews.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;  // Updated import
 import com.techventus.wikipedianews.R;
-import com.techventus.wikipedianews.fragment.WikiFragment;
-import com.techventus.wikipedianews.fragment.WikiNewsFragment;
+import com.techventus.wikipedianews.fragment.WikiNewsFragment;  // Ensure this fragment extends androidx.fragment.app.Fragment
 
 /**
  * Created by josephmalone on 16-08-23.
@@ -20,13 +19,14 @@ public class WikiActivity extends WikiToolbarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.generic_input_fragment_container);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);  // Modern cast removal
 		if (savedInstanceState == null)
 		{
 			Intent intent = getIntent();
 			mWikiFragment = new WikiNewsFragment();
-			getFragmentManager().beginTransaction().add(R.id.container, mWikiFragment, WIKI_FRAGMENT_TAG).commit();
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.container, mWikiFragment, WIKI_FRAGMENT_TAG)
+					.commit();
 		}
 	}
-
 }

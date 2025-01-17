@@ -1,8 +1,8 @@
 package com.techventus.wikipedianews.activity;
 
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.SearchView;  // Updated import
+import androidx.appcompat.widget.Toolbar;    // Updated import
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,11 +26,11 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 	private String mCurrentNavContentDesc = null;
 	private String mCurrentLogoDesc = null;
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Logger.d(TAG, "onCreate called");
 	}
 
 	@Override
@@ -38,13 +38,14 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 	{
 		super.setContentView(layoutResID);
 		checkAndSetToolbar();
+		Logger.d(TAG, "setContentView called");
 	}
 
 	@Override
 	public void setTitle(String title)
 	{
 		Logger.d(TAG, "Setting title");
-		mCurrentTitle =  Utils.uppercaseWords(title);
+		mCurrentTitle = Utils.uppercaseWords(title);
 		if (mToolbar != null && mToolbarTitle != null && title != null)
 		{
 			Logger.d(TAG, "Title = " + mCurrentTitle);
@@ -56,15 +57,20 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 	{
 		if (mToolbar == null)
 		{
-			mToolbar = (Toolbar) findViewById(R.id.toolbar);
-			mToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+			mToolbar = findViewById(R.id.toolbar);  // Modern cast removal
+			mToolbarTitle = findViewById(R.id.toolbar_title);
+			Logger.d(TAG, "checking for toolbar");
+
 			if (mToolbar != null)
 			{
-				this.setSupportActionBar(mToolbar);
-				getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-				getSupportActionBar().setDisplayShowHomeEnabled(true);
-				getSupportActionBar().setDisplayShowTitleEnabled(false);
-				getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_launcher);
+				Logger.d(TAG, "toolbar is not null, setting actionbar");
+				setSupportActionBar(mToolbar);
+				if (getSupportActionBar() != null) {
+					getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+					getSupportActionBar().setDisplayShowHomeEnabled(true);
+					getSupportActionBar().setDisplayShowTitleEnabled(false);
+					getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_launcher);
+				}
 				if (mCurrentTitle != null)
 				{
 					mToolbarTitle.setText(mCurrentTitle);
@@ -75,7 +81,7 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 				}
 				if (mCurrentLogoDesc != null)
 				{
-					setNavigationContentDescription(mCurrentLogoDesc);
+					setLogoDescription(mCurrentLogoDesc);
 				}
 			}
 		}
@@ -83,7 +89,12 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 
 	public void hideHomeAsUpIndicator()
 	{
-		getSupportActionBar().setHomeAsUpIndicator(null);
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setHomeAsUpIndicator(null);
+		}
+		if (mToolbar != null) {
+			mToolbar.setNavigationIcon(null);
+		}
 	}
 
 	@Override
@@ -109,89 +120,90 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 	@Override
 	public void setSearchEnabled(boolean enabled)
 	{
-
+		// Implement search enabling logic if needed
 	}
-
 
 	public void showUpIndicator(boolean enabled)
 	{
-		getSupportActionBar().setHomeAsUpIndicator(null);
-		mToolbar.setNavigationIcon(null);
-
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setHomeAsUpIndicator(null);
+		}
+		if (mToolbar != null) {
+			mToolbar.setNavigationIcon(null);
+		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
+		Logger.d(TAG, "onCreateOptionsMenu called");
 		mMenu = menu;
 		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.search_menu, mMenu);
+		// Uncomment and update if you have a search_menu
+		// inflater.inflate(R.menu.search_menu, mMenu);
 		mToolbarTitle.setVisibility(View.VISIBLE);
 		final MenuItem searchItem = menu.findItem(R.id.search);
-//		if (searchItem != null)
-//		{
-//			mSearchView = (SearchView) searchItem.getActionView();
-//			mSearchView.setMaxWidth(Integer.MAX_VALUE);
-//			if (mSearchView != null)
-//			{
-//				mSearchView.setQueryHint(getString(R.string.search_hint));
-//				final EditText searchTextView = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-//				try
-//				{
-//					Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
-//					mCursorDrawableRes.setAccessible(true);
-//					mCursorDrawableRes.set(searchTextView, R.drawable.search_cursor);
-//				}
-//				catch (Exception e)
-//				{
-//					//TODO consider removing or replacing with another analytic since
-//					//this may happen all the time on certain devices
-//				}
-//				searchTextView.setOnKeyListener(new View.OnKeyListener()
-//				{
-//					@Override
-//					public boolean onKey(View v, int keyCode, KeyEvent event)
-//					{
-//						if (event.getKeyCode() == 84 && mOnQueryTextListener != null && searchTextView != null)
-//						{
-//							mOnQueryTextListener.onQueryTextSubmit(searchTextView.getText().toString());
-//						}
-//						return false;
-//					}
-//				});
-//				mSearchView.setQuery("", false);
-//				mSearchView.setSubmitButtonEnabled(false);
-//				mSearchView.setOnSearchClickListener(new View.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(View v)
-//					{
-//						if (mToolbar != null)
-//						{
-//							mToolbarTitle.setVisibility(View.GONE);
-//							//TODO TEMP
-//							setCartEnabled(false);
-//						}
-//					}
-//				});
-//				mSearchView.setOnCloseListener(new SearchView.OnCloseListener()
-//				{
-//					@Override
-//					public boolean onClose()
-//					{
-//						closeSearch();
-//						setCartEnabled(true);
-//
-//						return false;
-//					}
-//				});
-//				mSearchView.setOnQueryTextListener(mOnQueryTextListener);
-//			}
-//			searchItem.setVisible(mSearchOptionEnabled);
-//		}
-
-
-
+		// Uncomment and update search logic if needed
+        /*
+        if (searchItem != null)
+        {
+            mSearchView = (SearchView) searchItem.getActionView();
+            mSearchView.setMaxWidth(Integer.MAX_VALUE);
+            if (mSearchView != null)
+            {
+                mSearchView.setQueryHint(getString(R.string.search_hint));
+                final EditText searchTextView = (EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
+                try
+                {
+                    Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+                    mCursorDrawableRes.setAccessible(true);
+                    mCursorDrawableRes.set(searchTextView, R.drawable.search_cursor);
+                }
+                catch (Exception e)
+                {
+                    // Handle exception appropriately
+                }
+                searchTextView.setOnKeyListener(new View.OnKeyListener()
+                {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH && mOnQueryTextListener != null && searchTextView != null)
+                        {
+                            mOnQueryTextListener.onQueryTextSubmit(searchTextView.getText().toString());
+                        }
+                        return false;
+                    }
+                });
+                mSearchView.setQuery("", false);
+                mSearchView.setSubmitButtonEnabled(false);
+                mSearchView.setOnSearchClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (mToolbar != null)
+                        {
+                            mToolbarTitle.setVisibility(View.GONE);
+                            // Implement additional logic if needed
+                        }
+                    }
+                });
+                mSearchView.setOnCloseListener(new SearchView.OnCloseListener()
+                {
+                    @Override
+                    public boolean onClose()
+                    {
+                        closeSearch();
+                        // Implement additional logic if needed
+                        return false;
+                    }
+                });
+                mSearchView.setOnQueryTextListener(mOnQueryTextListener);
+            }
+            searchItem.setVisible(mSearchOptionEnabled);
+        }
+        */
 		return super.onCreateOptionsMenu(mMenu);
 	}
 
@@ -200,11 +212,10 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 		@Override
 		public boolean onQueryTextSubmit(String s)
 		{
-			//TODO reenable
-//			mSearchView.clearFocus();
+			// Implement search submission logic
+			// mSearchView.clearFocus();
 			mToolbarTitle.setVisibility(View.VISIBLE);
-			//TODO start search results activity
-//			startActivity(SearchResultActivity.getStartIntent(WikiToolbarActivity.this, s, originString));
+			// startActivity(SearchResultActivity.getStartIntent(WikiToolbarActivity.this, s, originString));
 			return true;
 		}
 
@@ -215,8 +226,6 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 		}
 	};
 
-
-
 	protected void closeSearch()
 	{
 		if (mToolbar != null)
@@ -225,39 +234,42 @@ public class WikiToolbarActivity extends BaseActivity implements WikiFragment.To
 		}
 	}
 
-//	protected void showSearch()
-//	{
-//		mSearchView.setIconified(false);
-//	}
-//
-//	protected void hideSearch()
-//	{
-//		if (mSearchView != null)
-//		{
-//			mSearchView.setIconified(true);
-//		}
-//	}
+	// Uncomment and implement if needed
+    /*
+    protected void showSearch()
+    {
+        mSearchView.setIconified(false);
+    }
+
+    protected void hideSearch()
+    {
+        if (mSearchView != null)
+        {
+            mSearchView.setIconified(true);
+        }
+    }
+    */
 
 	protected void setSearchString(String query)
 	{
-//		mSearchView.setQuery(query, false);
-//		mSearchView.clearFocus();
+		// mSearchView.setQuery(query, false);
+		// mSearchView.clearFocus();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		Logger.d(TAG, "onOptionsItemSelected called");
 		switch (item.getItemId())
 		{
 			case android.R.id.home:
 				Logger.d(TAG, "Back/Home button pressed");
-//				finish();
+				// finish();
 				break;
-			case R.id.search:
-				Logger.d(TAG, "Search");
-				return true;
+//			case R.id.search:
+//				Logger.d(TAG, "Search");
+//				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 }

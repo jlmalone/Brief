@@ -2,11 +2,12 @@ package com.techventus.wikipedianews.dialogfragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+//import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import androidx.fragment.app.DialogFragment;
 import android.view.View;
 import android.widget.TextView;
 import com.techventus.wikipedianews.R;

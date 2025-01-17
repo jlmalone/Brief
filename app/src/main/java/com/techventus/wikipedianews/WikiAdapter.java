@@ -1,6 +1,5 @@
 package com.techventus.wikipedianews;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,7 @@ import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.util.ArrayUtil;
 import com.techventus.wikipedianews.view.WikiHeaderViewHolder;
 import com.techventus.wikipedianews.view.WikiViewHolder;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import java.util.ArrayList;
