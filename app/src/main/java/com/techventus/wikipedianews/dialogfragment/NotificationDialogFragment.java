@@ -2,7 +2,7 @@ package com.techventus.wikipedianews.dialogfragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,13 +11,20 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment; // Updated import
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+
 import com.techventus.wikipedianews.R;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class NotificationDialogFragment extends DialogFragment
-{
+public class NotificationDialogFragment extends DialogFragment {
+
+	public interface NotificationDialogListener {
+		void onPositiveButtonClicked(Intent intent);
+		void onNegativeButtonClicked(Intent intent);
+	}
+
 	public static final int ICON_NONE = 0;
 	public static final int ICON_ALERT = 1;
 
@@ -34,44 +41,19 @@ public class NotificationDialogFragment extends DialogFragment
 	protected static final String POSITIVE_BUTTON_TAG = "positive_button";
 	protected static final String NEGATIVE_BUTTON_TAG = "negative_button";
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body without icon
-	 * @param titleResourceId title resource ID (may be 0 for no title)
-	 * @param messageResourceId body resource ID
-	 * @param positiveButtonResourceId positive button resource ID
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(int titleResourceId, int messageResourceId, int positiveButtonResourceId)
-	{
+	private NotificationDialogListener listener;
+
+	// Factory methods
+
+	public static NotificationDialogFragment newInstance(int titleResourceId, int messageResourceId, int positiveButtonResourceId) {
 		return newInstance(ICON_NONE, titleResourceId, messageResourceId, positiveButtonResourceId, -1);
 	}
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body without icon
-	 * @param titleResourceId title resource ID (may be 0 for no title)
-	 * @param messageResourceId body resource ID
-	 * @param positiveButtonResourceId positive button resource ID
-	 * @param negativeButtonResourceId negative button resource ID
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(int titleResourceId, int messageResourceId, int positiveButtonResourceId,
-														 int negativeButtonResourceId)
-	{
+	public static NotificationDialogFragment newInstance(int titleResourceId, int messageResourceId, int positiveButtonResourceId, int negativeButtonResourceId) {
 		return newInstance(ICON_NONE, titleResourceId, messageResourceId, positiveButtonResourceId, negativeButtonResourceId);
 	}
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body with an icon as per the constants above
-	 * @param iconType one of the constants above
-	 * @param titleResourceId title resource ID (may be 0 for no title)
-	 * @param messageResourceId body resource ID
-	 * @param positiveButtonResourceId positive button resource ID
-	 * @param negativeButtonResourceId negative button resource ID
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(int iconType, int titleResourceId, int messageResourceId,
-														 int positiveButtonResourceId, int negativeButtonResourceId)
-	{
+	public static NotificationDialogFragment newInstance(int iconType, int titleResourceId, int messageResourceId, int positiveButtonResourceId, int negativeButtonResourceId) {
 		NotificationDialogFragment fragment = new NotificationDialogFragment();
 
 		Bundle args = new Bundle();
@@ -85,44 +67,15 @@ public class NotificationDialogFragment extends DialogFragment
 		return fragment;
 	}
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body with an icon as per the constants above
-	 * @param title dialog title, may be null
-	 * @param message dialog body
-	 * @param positiveButton positive button label
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(String title, String message, String positiveButton)
-	{
+	public static NotificationDialogFragment newInstance(String title, String message, String positiveButton) {
 		return newInstance(ICON_NONE, title, message, positiveButton, null);
 	}
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body with an icon as per the constants above
-	 * @param title dialog title, may be null
-	 * @param message dialog body
-	 * @param positiveButton positive button label
-	 * @param negativeButton negative button label
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(String title, String message, String positiveButton,
-														 String negativeButton)
-	{
+	public static NotificationDialogFragment newInstance(String title, String message, String positiveButton, String negativeButton) {
 		return newInstance(ICON_NONE, title, message, positiveButton, negativeButton);
 	}
 
-	/**
-	 * Returns a Notification Fragment configured to display a title and body without icon
-	 * @param iconType one of the constants above
-	 * @param title dialog title, may be null
-	 * @param message dialog body
-	 * @param positiveButton positive button label
-	 * @param negativeButton negative button label
-	 * @return the requested fragment
-	 */
-	public static NotificationDialogFragment newInstance(int iconType, String title, String message,
-														 String positiveButton, String negativeButton)
-	{
+	public static NotificationDialogFragment newInstance(int iconType, String title, String message, String positiveButton, String negativeButton) {
 		NotificationDialogFragment fragment = new NotificationDialogFragment();
 
 		Bundle args = new Bundle();
@@ -130,8 +83,7 @@ public class NotificationDialogFragment extends DialogFragment
 		args.putString(TITLE_TAG, title);
 		args.putString(MESSAGE_TAG, message);
 		args.putString(POSITIVE_BUTTON_TAG, positiveButton);
-		if(StringUtils.isNotEmpty(negativeButton))
-		{
+		if (StringUtils.isNotEmpty(negativeButton)) {
 			args.putString(NEGATIVE_BUTTON_TAG, negativeButton);
 		}
 		fragment.setArguments(args);
@@ -139,10 +91,21 @@ public class NotificationDialogFragment extends DialogFragment
 		return fragment;
 	}
 
+	@Override
+	public void onAttach(@NonNull Context context) {
+		super.onAttach(context);
+		Fragment parentFragment = getParentFragment();
+		if (parentFragment instanceof NotificationDialogListener) {
+			listener = (NotificationDialogListener) parentFragment;
+		} else {
+			throw new RuntimeException(parentFragment.toString()
+					+ " must implement NotificationDialogListener");
+		}
+	}
+
 	@NonNull
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState)
-	{
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle bundle = getArguments();
 		int iconType = bundle.getInt(ICON_TYPE_TAG, ICON_NONE);
 		int titleResourceId = bundle.getInt(TITLE_RESOURCE_ID_TAG, 0);
@@ -153,24 +116,19 @@ public class NotificationDialogFragment extends DialogFragment
 		String positiveButton = positiveButtonResourceId > 0 ? getString(positiveButtonResourceId) : bundle.getString(POSITIVE_BUTTON_TAG);
 		int negativeButtonResourceId = bundle.getInt(NEGATIVE_BUTTON_RESOURCE_ID_TAG);
 		String negativeButton = null;
-		if(negativeButtonResourceId >0)
-		{
+		if (negativeButtonResourceId > 0) {
 			negativeButton = getString(negativeButtonResourceId);
-		}
-		else if(bundle.containsKey(NEGATIVE_BUTTON_TAG) && StringUtils.isNotEmpty(bundle.getString(NEGATIVE_BUTTON_TAG)))
-		{
+		} else if (bundle.containsKey(NEGATIVE_BUTTON_TAG) && StringUtils.isNotEmpty(bundle.getString(NEGATIVE_BUTTON_TAG))) {
 			negativeButton = bundle.getString(NEGATIVE_BUTTON_TAG);
 		}
 
 		final View view = View.inflate(getActivity(), R.layout.notification_dialog_fragment, null);
-		TextView textView = (TextView) view.findViewById(R.id.dialog_title);
+		TextView titleView = view.findViewById(R.id.dialog_title);
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		if (!TextUtils.isEmpty(title))
-		{
-			textView.setText(title);
+		if (!TextUtils.isEmpty(title)) {
+			titleView.setText(title);
 			int resourceId;
-			switch (iconType)
-			{
+			switch (iconType) {
 				case ICON_ALERT:
 					resourceId = R.drawable.ic_error_36dp;
 					break;
@@ -179,34 +137,32 @@ public class NotificationDialogFragment extends DialogFragment
 					resourceId = -1;
 					break;
 			}
-			if (resourceId > 0)
-			{
-				textView.setCompoundDrawablesWithIntrinsicBounds(resourceId, 0, 0, 0);
-				textView.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.notification_drawable_padding));
+			if (resourceId > 0) {
+				titleView.setCompoundDrawablesWithIntrinsicBounds(resourceId, 0, 0, 0);
+				titleView.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.notification_drawable_padding));
 			}
+		} else {
+			titleView.setVisibility(View.GONE);
 		}
-		else
-		{
-			textView.setVisibility(View.GONE);
-		}
-		textView = (TextView) view.findViewById(R.id.dialog_body);
-		textView.setText(message);
-		builder.setPositiveButton(positiveButton, (dialog, which) -> { // Inline the OnClickListener
-			if (getTargetFragment() != null) {
-				Intent intent = getPositveButtonIntent(); // Call the Intent method
-				if(intent == null)
-				{
-					intent = new Intent(); // create a new intent if there is no intent returned.
+		TextView messageView = view.findViewById(R.id.dialog_body);
+		messageView.setText(message);
+		builder.setPositiveButton(positiveButton, (dialog, which) -> {
+			if (listener != null) {
+				Intent intent = getPositiveButtonIntent();
+				if (intent == null) {
+					intent = new Intent();
 				}
-				getTargetFragment().onActivityResult(getTargetRequestCode(), POSITIVE_BUTTON, intent);
+				listener.onPositiveButtonClicked(intent);
 			}
 		});
-		if (!TextUtils.isEmpty(negativeButton))
-		{
+		if (!TextUtils.isEmpty(negativeButton)) {
 			builder.setNegativeButton(negativeButton, (dialog, which) -> {
-				if (getTargetFragment() != null)
-				{
-					getTargetFragment().onActivityResult(getTargetRequestCode(), NEGATIVE_BUTTON, getNegativeButtonIntent());
+				if (listener != null) {
+					Intent intent = getNegativeButtonIntent();
+					if (intent == null) {
+						intent = new Intent();
+					}
+					listener.onNegativeButtonClicked(intent);
 				}
 			});
 		}
@@ -220,24 +176,20 @@ public class NotificationDialogFragment extends DialogFragment
 	}
 
 	/**
-	 * Method to be overriden if data should be returned to calling Parent
+	 * Method to be overridden if data should be returned to calling Parent
 	 * when Positive Button is clicked
-	 * @return Intent returned to instantiting onActivityResult
+	 * @return Intent returned to instantiating onActivityResult
 	 */
-	protected Intent getPositveButtonIntent()
-	{
+	protected Intent getPositiveButtonIntent() {
 		return null;
 	}
 
 	/**
-	 * Method to be overriden if data should be returned to calling Parent
+	 * Method to be overridden if data should be returned to calling Parent
 	 * when Negative Button is clicked
-	 * @return Intent returned to instantiting onActivityResult
+	 * @return Intent returned to instantiating onActivityResult
 	 */
-	protected Intent getNegativeButtonIntent()
-	{
+	protected Intent getNegativeButtonIntent() {
 		return null;
 	}
-
 }
-
