@@ -2,7 +2,8 @@ package com.techventus.wikipedianews;
 
 import android.app.Application;
 
-import androidx.multidex.BuildConfig;
+
+//import androidx.multidex.BuildConfig;
 
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.logging.Toaster;
@@ -28,7 +29,7 @@ public class WikiApplication extends Application
 		super.onCreate();
 
 		Logger.setShowErrorEnabled(isDebugEnabled());
-		Logger.setEnabled(true);
+//		Logger.setEnabled(true);
 
 		if(isDebugEnabled())
 		{
@@ -41,6 +42,8 @@ public class WikiApplication extends Application
 		if(PreferencesManager.getInstance().isLoggingEnabled())
 		{
 			Logger.setEnabled(isDebugEnabled());
+			Logger.v("BRIEF", "yes this is logging");
+
 		}
 
 		//TODO fix debug flag

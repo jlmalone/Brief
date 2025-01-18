@@ -15,38 +15,44 @@ android {
         targetSdkVersion 35
         versionCode 7
         versionName "1.6"
+        multiDexEnabled true
     }
+
+    // Enable BuildConfig generation
+    buildFeatures {
+        buildConfig true
+    }
+
     buildTypes {
         debug {
-            // You can add settings here specific to the debug build.
-            // Example:
-            //  debuggable true
+            debuggable true
+            // Removed 'debug true'
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' // Changed filename
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
+    flavorDimensions += "version"
     productFlavors {
-        debug {
-            applicationIdSuffix ".debug"
-            // Additional settings for debug build
+        dev {
+            dimension "version"
+            applicationIdSuffix ".dev"
             buildConfigField 'boolean', 'USE_HARDCODED_DATA', 'true'
+            // Removed 'debug true' and 'debuggable true'
         }
-        release {
-            // Settings for release build
-
+        real {
+            dimension "version"
             buildConfigField 'boolean', 'USE_HARDCODED_DATA', 'false'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 
-
-    // Add this block to specify the Kotlin JVM target
     kotlinOptions {
         jvmTarget = '17'
     }
@@ -61,7 +67,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
+//    implementation 'androidx.multidex:multidex:2.0.1'
 
     // Updated networking libraries
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
