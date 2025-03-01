@@ -18,6 +18,8 @@ gradlew.bat
 .idea/vcs.xml
 .idea/copyright/profiles_settings.xml
 app/app-release.apk
+/.idea/caches/deviceStreaming.xml
+/.idea/migrations.xml
 /.idea/deploymentTargetSelector.xml
 /.idea/deviceManager.xml
 /.idea/caches/deviceStreaming.xml
