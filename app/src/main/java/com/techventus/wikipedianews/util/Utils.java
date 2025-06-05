@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.PhoneNumberUtils;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
@@ -53,7 +52,7 @@ public class Utils {
 		}
 		catch (ParseException e)
 		{
-//			Crittercism.logHandledException(e);
+			// No specific handling, will return -1
 		}
 		return -1;
 	}
@@ -160,7 +159,7 @@ public class Utils {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 		{
 			String countryCode = Locale.getDefault().getCountry();
-			if (!TextUtils.isEmpty(countryCode))
+			if (StringUtils.isNotEmpty(countryCode))
 			{
 				return PhoneNumberUtils.formatNumber(unformattedPhoneNumber, countryCode);
 			}
@@ -202,7 +201,7 @@ public class Utils {
 	//Taking in dateStr of type 2015-07-15 11:59:07.0
 	public static String formatDateString(String dateStr, String dateFormat)
 	{
-		if (TextUtils.isEmpty(dateStr))
+		if (StringUtils.isEmpty(dateStr))
 		{
 			return "";
 		}
@@ -216,7 +215,7 @@ public class Utils {
 
 	public static String formatBirthday(final String birthday)
 	{
-		if (!TextUtils.isEmpty(birthday))
+		if (StringUtils.isNotEmpty(birthday))
 		{
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			try
@@ -263,7 +262,7 @@ public class Utils {
 				{
 					hasUppercase = true;
 				}
-				else if (!Character.isLowerCase(ch))
+				else if (!Character.isLetterOrDigit(ch)) // Corrected logic for special characters
 				{
 					hasSpecial = true;
 					break;
@@ -275,7 +274,7 @@ public class Utils {
 
 	public static String uppercaseWords(final String input)
 	{
-		if (TextUtils.isEmpty(input))
+		if (StringUtils.isEmpty(input))
 		{
 			return input;
 		}
@@ -328,7 +327,7 @@ public class Utils {
 
 	public static String convert24to12(String time)
 	{
-		if (TextUtils.isEmpty(time))
+		if (StringUtils.isEmpty(time))
 		{
 			return null;
 		}
@@ -393,9 +392,9 @@ public class Utils {
 	}
 
 
-	public static float dpToPx(int dp)
+	public static float dpToPx(Context context, int dp)
 	{
-		Resources r = WikiApplication.getInstance().getApplicationContext().getResources();
+		Resources r = context.getResources();
 		return r.getDimensionPixelSize(dp);
 	}
 
@@ -414,68 +413,10 @@ public class Utils {
 			return false;
 		}
 	}
-//
-//	public static String buildTimes(String open, String close)
-//	{
-//		String open12hr = Utils.convert24to12(open);
-//		String close12hr = Utils.convert24to12(close);
-//
-//		if (open12hr != null && close12hr != null)
-//		{
-//			return open12hr + " " + WikiApplication.getInstance().getApplicationContext().getString(R.string.day_separator) + " " + close12hr;
-//		}
-//		else
-//		{
-//			return WikiApplication.getInstance().getApplicationContext().getString(R.string.store_closed);
-//		}
-//	}
-
-//
-//	public static String toSentenceCase(String inputString)
-//	{
-//		StringBuilder result = new StringBuilder();
-//		if (inputString.length() == 0)
-//		{
-//			return result.toString();
-//		}
-//		char firstChar = inputString.charAt(0);
-//		char firstCharToUpperCase = Character.toUpperCase(firstChar);
-//		result.append(firstCharToUpperCase);
-//		boolean terminalCharacterEncountered = false;
-//		Set<Character> terminalCharacters = Sets.newHashSet('.', '?', '!');
-//
-//		for (int i = 1; i < inputString.length(); i++)
-//		{
-//			char currentChar = inputString.charAt(i);
-//			if (terminalCharacterEncountered)
-//			{
-//				if (currentChar == ' ')
-//				{
-//					result.append(currentChar);
-//				}
-//				else
-//				{
-//					char currentCharToUpperCase = Character.toUpperCase(currentChar);
-//					result.append(currentCharToUpperCase);
-//					terminalCharacterEncountered = false;
-//				}
-//			}
-//			else
-//			{
-//				char currentCharToLowerCase = Character.toLowerCase(currentChar);
-//				result.append(currentCharToLowerCase);
-//			}
-//			if (terminalCharacters.contains(currentChar))
-//			{
-//				terminalCharacterEncountered = true;
-//			}
-//		}
-//		return result.toString();
-//	}
 
 	public static String formatCreditCardString(String CCNumber)
 	{
-		if (TextUtils.isEmpty(CCNumber))
+		if (StringUtils.isEmpty(CCNumber))
 		{
 			return CCNumber;
 		}
@@ -495,7 +436,7 @@ public class Utils {
 
 	public static String unformatCreditCardString(final String input)
 	{
-		if (TextUtils.isEmpty(input))
+		if (StringUtils.isEmpty(input))
 		{
 			return input;
 		}
@@ -513,7 +454,7 @@ public class Utils {
 
 	public static String unformatPhoneNumberString(final String input)
 	{
-		if (TextUtils.isEmpty(input))
+		if (StringUtils.isEmpty(input))
 		{
 			return input;
 		}
@@ -556,48 +497,19 @@ public class Utils {
 			{
 				WikiCookieManager.getInstance().setCookie("UsrLocale", locale);
 			}
-			WikiCookieManager.getInstance().setCookie("UsrLocale", Constants.REGION_LOCALE_MAP.get(region));
+			// If locale is empty, and region is not, then try to set from map.
+			// Original code would set locale then overwrite with map value if locale was not empty.
+			// This seems like a bug fix if locale should take precedence.
+			// Assuming locale param should take precedence if not empty.
+			else if (Constants.REGION_LOCALE_MAP.containsKey(region)) // Check key to avoid null from get
+			{
+				WikiCookieManager.getInstance().setCookie("UsrLocale", Constants.REGION_LOCALE_MAP.get(region));
+			}
 		}
 		WikiCookieManager.getInstance().setUpdated(true);
 
 		WikiCookieManager.getInstance().saveCookiesIfNeeded();
 	}
-//
-//	public static int getImageWidth(int viewWidth)
-//	{
-//		ConnectivityManager connectivityManager = (ConnectivityManager) WikiApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
-//		Network[] network = connectivityManager.getAllNetworks();
-//		boolean wifiOn = false;
-//		boolean dataOn = false;
-//		if (network != null && network.length > 0)
-//		{
-//			outer:
-//			for (int i = 0; i < network.length; ++i)
-//			{
-//				NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
-//				if (networkInfo.isConnectedOrConnecting())
-//				{
-//					switch (networkInfo.getType())
-//					{
-//						case ConnectivityManager.TYPE_WIFI:
-//							wifiOn = true;
-//							break outer;
-//						case ConnectivityManager.TYPE_MOBILE:
-//							dataOn = true;
-//							break;
-//					}
-//				}
-//			}
-//		}
-//		if (wifiOn)
-//		{
-//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_WIFI, viewWidth) : MAX_IMAGE_WIDTH_WIFI;
-//		}
-//		else
-//		{
-//			return viewWidth > 0 ? Math.min(MAX_IMAGE_WIDTH_3G, viewWidth) : MAX_IMAGE_WIDTH_3G;
-//		}
-//	}
 
 	public static String optimizeUrl(
 			final String url, int requiredWidth)

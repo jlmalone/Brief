@@ -1,32 +1,20 @@
 package com.techventus.wikipedianews.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by josephmalone on 15-07-14.
  */
 public class UrlParamEncoder {
 
 	public static String encode(String input) {
-		StringBuilder resultStr = new StringBuilder();
-		for (char ch : input.toCharArray()) {
-			if (isUnsafe(ch)) {
-				resultStr.append('%');
-				resultStr.append(toHex(ch / 16));
-				resultStr.append(toHex(ch % 16));
-			} else {
-				resultStr.append(ch);
-			}
+		try {
+			return URLEncoder.encode(input, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// This should never happen, as UTF-8 is a standard charset
+			throw new RuntimeException("UTF-8 encoding not supported", e);
 		}
-		return resultStr.toString();
-	}
-
-	private static char toHex(int ch) {
-		return (char) (ch < 10 ? '0' + ch : 'A' + ch - 10);
-	}
-
-	private static boolean isUnsafe(char ch) {
-		if (ch > 128 || ch < 0)
-			return true;
-		return " %$&+,/:;=?@<>#%".indexOf(ch) >= 0;
 	}
 
 }
