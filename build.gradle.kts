@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.8.2") // Keep the latest AGP version
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0") // Match Kotlin version in module
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20") // Update Kotlin version
     }
 }
 
