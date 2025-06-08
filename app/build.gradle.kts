@@ -57,6 +57,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20") // Add Kotlin stdlib
     implementation("org.jsoup:jsoup:1.17.2")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
