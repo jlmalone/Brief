@@ -25,3 +25,4 @@ app/app-release.apk
 /.idea/caches/deviceStreaming.xml
 /.idea/kotlinc.xml
 /.idea/migrations.xml
+/.idea/AndroidProjectSystem.xml

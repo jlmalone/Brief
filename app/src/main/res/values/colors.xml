@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<color name="md_theme_light_primary">#6750A4</color>
+	<color name="md_theme_light_onPrimary">#FFFFFF</color>
+	<color name="md_theme_light_primaryContainer">#EADDFF</color>
+	<color name="md_theme_light_secondary">#625B71</color>
+	<color name="md_theme_light_onSecondary">#FFFFFF</color>
+	<color name="md_theme_light_secondaryContainer">#E8DEF8</color>
+	<color name="md_theme_light_background">#FFFBFE</color>
+
+	<color name="notification_dialog_button">@color/md_theme_light_primary</color>
+
 	<color name="colorPrimary">#3F51B5</color>
 	<color name="colorPrimaryDark">#303F9F</color>
 	<color name="colorAccent">#2222aa</color>
@@ -15,7 +25,7 @@
 	<!-- Button Primary Background Color Pressed -->
 	<color name="button_primary_background_pressed">#189331</color>
 	<!-- notification dialog button color -->
-	<color name="notification_dialog_button">@color/button_primary_background</color>
+<!--	<color name="notification_dialog_button">@color/button_primary_background</color>-->
 	<color name="grey_dark_light">#777777</color>
 	<color name="black">#000000</color>
 	<color name="red">#ff0000</color>
