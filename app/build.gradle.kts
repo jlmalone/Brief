@@ -13,8 +13,8 @@ android {
         applicationId = "com.techventus.wikipedianews"
         minSdk = 28
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.6"
+        versionCode = 9
+        versionName = "1.9"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
