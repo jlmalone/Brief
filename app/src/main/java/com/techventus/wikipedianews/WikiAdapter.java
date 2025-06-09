@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.techventus.wikipedianews.logging.Logger;
-import com.techventus.wikipedianews.util.ArrayUtil;
 import com.techventus.wikipedianews.view.WikiHeaderViewHolder;
 import com.techventus.wikipedianews.view.WikiViewHolder;
 
@@ -76,7 +75,7 @@ public class WikiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	@Override
 	public int getItemCount() {
-		int count = ArrayUtil.isNullOrEmpty(mData) ? 0 : mData.size();
+		int count = (mData == null || mData.isEmpty()) ? 0 : mData.size();
 		Logger.v(TAG, "getItemCount: " + count);
 		return count;
 	}

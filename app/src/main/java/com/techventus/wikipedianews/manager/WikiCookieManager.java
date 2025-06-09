@@ -5,7 +5,7 @@ package com.techventus.wikipedianews.manager;
  */
 
 import android.os.AsyncTask;
-import com.techventus.wikipedianews.util.ArrayUtil;
+// import com.techventus.wikipedianews.util.ArrayUtil; // Removed
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class WikiCookieManager extends CookieManager
 	 */
 	public void setCookie(final String[] cookieTuple)
 	{
-		if (!ArrayUtil.isNullOrContainsEmpty(cookieTuple) && cookieTuple.length == 2 && !(COOKIE_MAP.containsKey(cookieTuple[0]) && COOKIE_MAP.get(
+		if (cookieTuple != null && cookieTuple.length == 2 && cookieTuple[0] != null && cookieTuple[1] != null && !(COOKIE_MAP.containsKey(cookieTuple[0]) && COOKIE_MAP.get(
 				cookieTuple[0]).equals(cookieTuple[1])))
 		{
 			mUpdated = true;
