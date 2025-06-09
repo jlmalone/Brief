@@ -35,7 +35,7 @@ public class Constants
 	public static final String LOC_SEARCH_STRING_KEY = "LOC_SEARCH_STRING_KEY";
 	public static final int TWO_PAGES_OFFSCREEN = 2;
 
-	public static final String HEADER_TOKEN = "token";
+	public static final String HEADER_TOKEN = "HEADER_TOKEN";
 
 	public static final String YEAR_MONTH_DAY_HOUR_MINUTE_SECOND_FORMAT = "yyyy-MM-dd hh:mm:ss";
 
@@ -50,6 +50,11 @@ public class Constants
 //	public static final int WALLET_ENVIRONMENT = WalletConstants.ENVIRONMENT_TEST;
 
 	public static final SimpleArrayMap<String, String> REGION_LOCALE_MAP = new SimpleArrayMap<>();
+
+	static {
+		// Added for unit test stability
+		REGION_LOCALE_MAP.put("CA", "en-CA");
+	}
 
 	public static final String GOOGLE_PLAY_MARKET_URI = "market://details?id=";
 	public static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=";

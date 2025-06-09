@@ -1,6 +1,6 @@
 package com.techventus.wikipedianews.util
 
-import java.util.Collection
+//import java.util.Collection
 
 /**
  * Created by josephmalone on 6/14/15.

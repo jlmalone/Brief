@@ -7,8 +7,6 @@ import java.util.Arrays
 
 class ArrayUtilTest {
 
-    // Tests for isNullOrContainsEmpty(array: Array<T?>?)
-
     @Test
     fun testIsNullOrContainsEmpty_nullArray() {
         assertTrue(isNullOrContainsEmpty(null as Array<String?>?))

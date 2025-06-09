@@ -19,7 +19,14 @@ public class WikiActivity extends WikiToolbarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.generic_input_fragment_container);
-		Toolbar toolbar = findViewById(R.id.toolbar);  // Modern cast removal
+
+		// Set the title using the Activity's method. This will be handled by WikiToolbarActivity.
+		setTitle(R.string.brief);
+
+		// Explicitly ensure the "up" indicator (back arrow) is NOT shown on this main screen.
+		showUpIndicator(false);
+
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		if (savedInstanceState == null)
 		{
 			Intent intent = getIntent();
