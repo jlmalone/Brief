@@ -18,6 +18,7 @@ public class PreferencesManager
 
 	private static final String PREF_LOGGING_ENABLED = "PREF_LOGGING_ENABLED";
 	private static final String PREF_DEBUG_MODE_ENABLED = "PREF_DEBUG_MODE_ENABLED"; // Added debug mode preference
+	private static final String PREF_HARDCODED_DATA_EXPIRATION_TIMESTAMP = "PREF_HARDCODED_DATA_EXPIRATION_TIMESTAMP";
 
 	private static volatile PreferencesManager mInstance;
 	private final SharedPreferences mPreferences;
@@ -99,5 +100,14 @@ public class PreferencesManager
 	public void setDebugModeEnabled(boolean enabled)
 	{
 		mPreferences.edit().putBoolean(PREF_DEBUG_MODE_ENABLED, enabled).apply();
+	}
+
+	public long getHardcodedDataExpiration() {
+		// Returns 0 if not set, meaning hardcoded data is disabled or no expiry.
+		return mPreferences.getLong(PREF_HARDCODED_DATA_EXPIRATION_TIMESTAMP, 0L);
+	}
+
+	public void setHardcodedDataExpiration(long timestamp) {
+		mPreferences.edit().putLong(PREF_HARDCODED_DATA_EXPIRATION_TIMESTAMP, timestamp).apply();
 	}
 }

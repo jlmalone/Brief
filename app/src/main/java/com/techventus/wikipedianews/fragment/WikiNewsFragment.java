@@ -17,6 +17,8 @@ import okhttp3.Response;
 import com.techventus.wikipedianews.R;
 import com.techventus.wikipedianews.WikiAdapter;
 import com.techventus.wikipedianews.WikiData;
+import com.techventus.wikipedianews.data.HardcodedNewsData;
+import com.techventus.wikipedianews.manager.PreferencesManager;
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.view.LoadingViewFlipper;
 import com.techventus.wikipedianews.dialogfragment.NotificationDialogFragment;
@@ -28,6 +30,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Updated WikiNewsFragment with enhanced logging and error handling using Jsoup.
@@ -40,7 +43,8 @@ public class WikiNewsFragment extends WikiFragment implements NotificationDialog
 	private RecyclerView mRecyclerView;
 	private WikiAdapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
-	private ArrayList<WikiData> mData;
+	private ArrayList<WikiData> mData = new ArrayList<>();
+	private PreferencesManager mPreferencesManager;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,8 +85,41 @@ public class WikiNewsFragment extends WikiFragment implements NotificationDialog
 		mRecyclerView.setAdapter(mAdapter);
 		Logger.d(TAG, "RecyclerView and Adapter set up");
 
-		// Start data fetching
-		getData();
+		mPreferencesManager = PreferencesManager.getInstance();
+
+		// Decide whether to load hardcoded data or live data
+		long expirationTimestamp = mPreferencesManager.getHardcodedDataExpiration();
+		long currentTime = new Date().getTime();
+
+		if (expirationTimestamp > 0 && currentTime < expirationTimestamp) {
+			Logger.d(TAG, "Using hardcoded data as current time (" + currentTime + ") is before expiration (" + expirationTimestamp + ")");
+			loadHardcodedData();
+		} else {
+			if (expirationTimestamp > 0) {
+				Logger.d(TAG, "Hardcoded data expired. Current time: " + currentTime + ", Expiration: " + expirationTimestamp);
+			} else {
+				Logger.d(TAG, "Hardcoded data not enabled or no expiration set.");
+			}
+			// Start data fetching for live data
+			getData();
+		}
+	}
+
+	private void loadHardcodedData() {
+		Logger.d(TAG, "Loading hardcoded data");
+		// Ensure mData is cleared or re-initialized if it could contain old data
+		mData.clear();
+		ArrayList<WikiData> hardcodedItems = HardcodedNewsData.getHardcodedData();
+		if (hardcodedItems != null && !hardcodedItems.isEmpty()) {
+			mData.addAll(hardcodedItems); // Add items to existing mData
+			mAdapter.updateData(mData); // Update adapter with the new mData
+			mLoadingFlipper.showContent();
+			Logger.d(TAG, "Hardcoded data loaded successfully");
+		} else {
+			Logger.e(TAG, "Hardcoded data is null or empty");
+			mLoadingFlipper.setError("Failed to load hardcoded data.");
+			mLoadingFlipper.showError();
+		}
 	}
 
 	/**

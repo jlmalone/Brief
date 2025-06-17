@@ -5,6 +5,8 @@ import android.app.Application;
 
 //import androidx.multidex.BuildConfig;
 
+import java.util.Calendar;
+import java.util.Date;
 import com.techventus.wikipedianews.logging.Logger;
 import com.techventus.wikipedianews.logging.Toaster;
 import com.techventus.wikipedianews.manager.PreferencesManager;
@@ -50,6 +52,18 @@ public class WikiApplication extends Application
 		Toaster.setEnabled(isDebugEnabled());
 		Toaster.setEnabled(true);
 
+		// Set a default expiration for hardcoded data if none is set (for testing)
+		PreferencesManager prefsManager = PreferencesManager.getInstance();
+		if (prefsManager.getHardcodedDataExpiration() == 0L) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_YEAR, 7); // Expires in 7 days
+			long defaultExpirationTimestamp = calendar.getTimeInMillis();
+			prefsManager.setHardcodedDataExpiration(defaultExpirationTimestamp);
+			Logger.i(TAG, "No hardcoded data expiration set. Defaulting to 7 days from now: " + new Date(defaultExpirationTimestamp));
+		} else {
+			Logger.i(TAG, "Hardcoded data expiration is already set to: " + new Date(prefsManager.getHardcodedDataExpiration()));
+		}
 	}
 
 	public static boolean isDebugEnabled()
