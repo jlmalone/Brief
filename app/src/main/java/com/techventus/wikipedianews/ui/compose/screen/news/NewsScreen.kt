@@ -1,0 +1,162 @@
+package com.techventus.wikipedianews.ui.compose.screen.news
+
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.techventus.wikipedianews.model.domain.NewsArticle
+import com.techventus.wikipedianews.ui.compose.component.ErrorView
+import com.techventus.wikipedianews.ui.compose.component.LoadingIndicator
+import com.techventus.wikipedianews.ui.compose.component.NewsArticleCard
+import com.techventus.wikipedianews.ui.compose.component.SectionHeader
+
+/**
+ * News screen - main screen of the app.
+ *
+ * Displays news sections with articles.
+ * Following android-template pattern for Compose screens.
+ */
+@Composable
+fun NewsScreen(
+    viewModel: NewsViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    NewsScreenContent(
+        uiState = uiState,
+        onRefresh = viewModel::refresh,
+        onArticleClick = { article ->
+            // Open article URL in browser
+            if (article.url.isNotEmpty()) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+                context.startActivity(intent)
+            }
+        },
+        onRetry = viewModel::retry
+    )
+}
+
+/**
+ * News screen content.
+ * Separated for easier testing and preview.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NewsScreenContent(
+    uiState: NewsUiState,
+    onRefresh: () -> Unit,
+    onArticleClick: (NewsArticle) -> Unit,
+    onRetry: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Brief - Current Events") },
+                colors = TopAppBarDefaults.topAppBarColors()
+            )
+        },
+        floatingActionButton = {
+            if (uiState is NewsUiState.Success) {
+                FloatingActionButton(
+                    onClick = onRefresh
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh"
+                    )
+                }
+            }
+        }
+    ) { paddingValues ->
+        PullToRefreshBox(
+            isRefreshing = uiState is NewsUiState.Loading,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (uiState) {
+                is NewsUiState.Loading -> {
+                    LoadingIndicator()
+                }
+
+                is NewsUiState.Success -> {
+                    NewsContent(
+                        sections = uiState.sections,
+                        onArticleClick = onArticleClick
+                    )
+                }
+
+                is NewsUiState.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No news available. Pull to refresh.")
+                    }
+                }
+
+                is NewsUiState.Error -> {
+                    ErrorView(
+                        message = uiState.message,
+                        onRetry = if (uiState.canRetry) onRetry else null
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * News content list.
+ */
+@Composable
+private fun NewsContent(
+    sections: List<com.techventus.wikipedianews.model.domain.NewsSection>,
+    onArticleClick: (NewsArticle) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        sections.forEach { section ->
+            // Section header
+            item(key = "header_${section.header}") {
+                SectionHeader(text = section.header)
+            }
+
+            // Section articles
+            items(
+                items = section.articles,
+                key = { article -> article.id }
+            ) { article ->
+                NewsArticleCard(
+                    article = article,
+                    onArticleClick = onArticleClick
+                )
+            }
+        }
+    }
+}
