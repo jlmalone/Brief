@@ -109,6 +109,9 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
 
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
     // Image Loading (keeping Glide for now, can migrate to Coil later)
     implementation(libs.glide)
     ksp(libs.glide.compiler)

@@ -6,10 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.techventus.wikipedianews.ui.compose.screen.news.NewsScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.techventus.wikipedianews.model.datastore.UserPreferencesDataStore
+import com.techventus.wikipedianews.ui.navigation.NavGraph
 import com.techventus.wikipedianews.ui.theme.BriefTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Main activity for Brief app.
@@ -17,21 +22,31 @@ import dagger.hilt.android.AndroidEntryPoint
  * Following android-template pattern:
  * - ComponentActivity for Compose
  * - @AndroidEntryPoint for Hilt injection
- * - Minimal activity with Compose content only
+ * - Navigation with NavHost
+ * - Dark theme from DataStore preferences
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var userPreferencesDataStore: UserPreferencesDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            BriefTheme {
+            val preferences by userPreferencesDataStore.userPreferencesFlow
+                .collectAsStateWithLifecycle(
+                    initialValue = UserPreferencesDataStore.UserPreferences()
+                )
+
+            BriefTheme(darkTheme = preferences.isDarkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NewsScreen()
+                    val navController = rememberNavController()
+                    NavGraph(navController = navController)
                 }
             }
         }
