@@ -1,26 +1,39 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 android {
     namespace = "com.techventus.wikipedianews"
     compileSdk = 36
 
-    useLibrary("org.apache.http.legacy")
-
     defaultConfig {
         applicationId = "com.techventus.wikipedianews"
         minSdk = 28
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.9"
+        versionCode = 10
+        versionName = "2.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildFeatures {
         buildConfig = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     buildTypes {
@@ -63,29 +76,65 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.0") // Aligned with plugin version
-    implementation("androidx.core:core-ktx:1.13.1") // Added for ContextCompat
-    implementation("org.jsoup:jsoup:1.17.2")
+    // Kotlin
+    implementation(libs.kotlin.stdlib)
 
-    implementation("androidx.appcompat:appcompat:1.7.0") // Using stable version
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.percentlayout:percentlayout:1.0.0")
+    // AndroidX Core
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.cardview)
 
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    // Lifecycle
+    implementation(libs.bundles.lifecycle)
 
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    // Jetpack Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation("org.apache.commons:commons-lang3:3.14.0")
+    // Dependency Injection - Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
-    // Testing dependencies
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.13")
-    testImplementation("org.mockito:mockito-core:5.12.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0") // For mocking static methods
-    testImplementation("androidx.test:core-ktx:1.6.1")
+    // Networking
+    implementation(libs.bundles.retrofit)
+    implementation(libs.jsoup)
+
+    // Database - Room
+    implementation(libs.bundles.room)
+    ksp(libs.androidx.room.compiler)
+
+    // Image Loading (keeping Glide for now, can migrate to Coil later)
+    implementation(libs.glide)
+    ksp(libs.glide.compiler)
+    // Alternative: implementation(libs.coil.compose)
+
+    // Material Design
+    implementation(libs.google.material)
+
+    // Utilities
+    implementation(libs.apache.commons.lang3)
+    implementation(libs.timber)
+
+    // Background Work
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // Hilt Testing
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
 }

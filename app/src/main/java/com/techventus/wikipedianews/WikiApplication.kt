@@ -4,46 +4,51 @@ import android.app.Application
 import com.techventus.wikipedianews.logging.Logger
 import com.techventus.wikipedianews.logging.Toaster
 import com.techventus.wikipedianews.manager.PreferencesManager
+import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 /**
- * Created by josephmalone on 16-06-23.
+ * Brief Application class with Hilt dependency injection.
+ *
+ * Modernization notes:
+ * - Added @HiltAndroidApp for dependency injection
+ * - Removed static singleton pattern (use Hilt injection instead)
+ * - Integrated Timber for logging
+ * - Fixed debug flag logic (removed TODO)
  */
+@HiltAndroidApp
 class WikiApplication : Application() {
 
     override fun onCreate() {
-        mWikiApp = this
         super.onCreate()
 
-        Logger.setShowErrorEnabled(isDebugEnabled)
-        // Logger.setEnabled(true)
+        // Initialize Timber logging
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+            Timber.d("Brief app starting in DEBUG mode")
+        }
 
-        if (isDebugEnabled) {
+        // Legacy Logger setup for gradual migration
+        Logger.setShowErrorEnabled(BuildConfig.DEBUG)
+
+        if (BuildConfig.DEBUG) {
             PreferencesManager.getInstance().isLoggingEnabled = true
         }
 
-        // We have a developer option that enables logging in production.
-        // Therefore, we separate the enabling and disabling of it into this
-        // if statement.
+        // Developer option for logging in production
         if (PreferencesManager.getInstance().isLoggingEnabled) {
-            Logger.setEnabled(isDebugEnabled)
-            Logger.v("BRIEF", "yes this is logging")
+            Logger.setEnabled(BuildConfig.DEBUG)
+            Logger.v("BRIEF", "Legacy logging enabled")
+            Timber.v("Legacy logging enabled")
         }
 
-        // TODO fix debug flag
-        Toaster.setEnabled(isDebugEnabled)
-        Toaster.setEnabled(true)
+        // Fixed: Enable Toaster only in debug builds (removed duplicate line)
+        Toaster.setEnabled(BuildConfig.DEBUG)
     }
 
     companion object {
         private val TAG = WikiApplication::class.java.simpleName
-        private var mWikiApp: WikiApplication? = null
 
-        @JvmStatic
-        fun getInstance(): WikiApplication? {
-            return mWikiApp
-        }
-
-        @JvmStatic
         val isDebugEnabled: Boolean
             get() = BuildConfig.DEBUG
     }
