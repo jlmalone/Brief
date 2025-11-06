@@ -9,9 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import com.techventus.wikipedianews.model.datastore.UserPreferencesDataStore
-import com.techventus.wikipedianews.ui.navigation.NavGraph
+import com.techventus.wikipedianews.ui.compose.MainScreen
 import com.techventus.wikipedianews.ui.theme.BriefTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -22,7 +21,7 @@ import javax.inject.Inject
  * Following android-template pattern:
  * - ComponentActivity for Compose
  * - @AndroidEntryPoint for Hilt injection
- * - Navigation with NavHost
+ * - Bottom navigation with MainScreen
  * - Dark theme from DataStore preferences
  */
 @AndroidEntryPoint
@@ -45,8 +44,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    NavGraph(navController = navController)
+                    MainScreen()
                 }
             }
         }
