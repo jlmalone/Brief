@@ -113,6 +113,21 @@ class NewsViewModel @Inject constructor(
             _uiState.value = NewsUiState.Empty
         }
     }
+
+    /**
+     * Toggle bookmark status for an article.
+     */
+    fun toggleBookmark(articleId: String, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            try {
+                Timber.d("Toggling bookmark for $articleId to $isBookmarked")
+                repository.toggleBookmark(articleId, isBookmarked)
+                // UI will update automatically via observeNews()
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to toggle bookmark")
+            }
+        }
+    }
 }
 
 /**

@@ -58,7 +58,8 @@ fun NewsScreen(
             }
         },
         onRetry = viewModel::retry,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToSettings = onNavigateToSettings,
+        onBookmarkToggle = viewModel::toggleBookmark
     )
 }
 
@@ -73,7 +74,8 @@ private fun NewsScreenContent(
     onRefresh: () -> Unit,
     onArticleClick: (NewsArticle) -> Unit,
     onRetry: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onBookmarkToggle: (String, Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -118,7 +120,8 @@ private fun NewsScreenContent(
                 is NewsUiState.Success -> {
                     NewsContent(
                         sections = uiState.sections,
-                        onArticleClick = onArticleClick
+                        onArticleClick = onArticleClick,
+                        onBookmarkToggle = onBookmarkToggle
                     )
                 }
 
@@ -149,6 +152,7 @@ private fun NewsScreenContent(
 private fun NewsContent(
     sections: List<com.techventus.wikipedianews.model.domain.NewsSection>,
     onArticleClick: (NewsArticle) -> Unit,
+    onBookmarkToggle: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -167,7 +171,8 @@ private fun NewsContent(
             ) { article ->
                 NewsArticleCard(
                     article = article,
-                    onArticleClick = onArticleClick
+                    onArticleClick = onArticleClick,
+                    onBookmarkToggle = onBookmarkToggle
                 )
             }
         }

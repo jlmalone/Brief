@@ -48,4 +48,26 @@ interface NewsRepository {
      * Clear all cached news.
      */
     suspend fun clearCache()
+
+    /**
+     * Observe bookmarked articles as a reactive Flow.
+     *
+     * @return Flow of bookmarked news sections
+     */
+    fun observeBookmarkedNews(): Flow<List<NewsSection>>
+
+    /**
+     * Toggle bookmark status for an article.
+     *
+     * @param articleId The article ID to toggle
+     * @param isBookmarked The new bookmark status
+     */
+    suspend fun toggleBookmark(articleId: String, isBookmarked: Boolean)
+
+    /**
+     * Get bookmarked articles count.
+     *
+     * @return Number of bookmarked articles
+     */
+    suspend fun getBookmarkedCount(): Int
 }

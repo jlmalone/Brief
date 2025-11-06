@@ -16,7 +16,8 @@ data class NewsArticleEntity(
     val htmlContent: String,
     val url: String,
     val timestamp: Long,
-    val cachedAt: Long = System.currentTimeMillis()
+    val cachedAt: Long = System.currentTimeMillis(),
+    val isBookmarked: Boolean = false
 )
 
 /**
@@ -28,7 +29,8 @@ fun NewsArticleEntity.toDomain(): NewsArticle {
         title = title,
         htmlContent = htmlContent,
         url = url,
-        timestamp = timestamp
+        timestamp = timestamp,
+        isBookmarked = isBookmarked
     )
 }
 
@@ -42,6 +44,7 @@ fun NewsArticle.toEntity(sectionHeader: String): NewsArticleEntity {
         title = title,
         htmlContent = htmlContent,
         url = url,
-        timestamp = timestamp
+        timestamp = timestamp,
+        isBookmarked = isBookmarked
     )
 }

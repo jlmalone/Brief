@@ -15,5 +15,6 @@ data class NewsArticle(
     val title: String,
     val htmlContent: String,
     val url: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val isBookmarked: Boolean = false
 ) : Parcelable

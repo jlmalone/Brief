@@ -48,4 +48,28 @@ interface NewsDao {
      */
     @Query("SELECT COUNT(*) FROM news_articles")
     suspend fun getArticlesCount(): Int
+
+    /**
+     * Observe bookmarked articles.
+     */
+    @Query("SELECT * FROM news_articles WHERE isBookmarked = 1 ORDER BY timestamp DESC")
+    fun observeBookmarkedArticles(): Flow<List<NewsArticleEntity>>
+
+    /**
+     * Get bookmarked articles.
+     */
+    @Query("SELECT * FROM news_articles WHERE isBookmarked = 1 ORDER BY timestamp DESC")
+    suspend fun getBookmarkedArticles(): List<NewsArticleEntity>
+
+    /**
+     * Toggle bookmark status for an article.
+     */
+    @Query("UPDATE news_articles SET isBookmarked = :isBookmarked WHERE id = :articleId")
+    suspend fun updateBookmarkStatus(articleId: String, isBookmarked: Boolean)
+
+    /**
+     * Get bookmark count.
+     */
+    @Query("SELECT COUNT(*) FROM news_articles WHERE isBookmarked = 1")
+    suspend fun getBookmarkedCount(): Int
 }

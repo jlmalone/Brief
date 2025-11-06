@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
@@ -39,6 +41,7 @@ import com.techventus.wikipedianews.model.domain.NewsArticle
 fun NewsArticleCard(
     article: NewsArticle,
     onArticleClick: (NewsArticle) -> Unit,
+    onBookmarkToggle: (String, Boolean) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -75,6 +78,31 @@ fun NewsArticleCard(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Bookmark button
+                IconButton(
+                    onClick = {
+                        onBookmarkToggle(article.id, !article.isBookmarked)
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (article.isBookmarked) {
+                            Icons.Default.Bookmark
+                        } else {
+                            Icons.Default.BookmarkBorder
+                        },
+                        contentDescription = if (article.isBookmarked) {
+                            "Remove bookmark"
+                        } else {
+                            "Add bookmark"
+                        },
+                        tint = if (article.isBookmarked) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                    )
+                }
+
                 // Share button
                 IconButton(
                     onClick = {

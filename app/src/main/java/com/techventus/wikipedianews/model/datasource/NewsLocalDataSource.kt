@@ -100,6 +100,42 @@ class NewsLocalDataSource @Inject constructor(
     }
 
     /**
+     * Observe bookmarked articles from database as Flow.
+     */
+    fun observeBookmarkedNews(): Flow<List<NewsSection>> {
+        return newsDao.observeBookmarkedArticles()
+            .map { entities -> groupEntitiesIntoSections(entities) }
+    }
+
+    /**
+     * Get bookmarked articles from database.
+     */
+    suspend fun getBookmarkedNews(): List<NewsSection> {
+        val entities = newsDao.getBookmarkedArticles()
+        return groupEntitiesIntoSections(entities)
+    }
+
+    /**
+     * Toggle bookmark status for an article.
+     */
+    suspend fun toggleBookmark(articleId: String, isBookmarked: Boolean) {
+        try {
+            newsDao.updateBookmarkStatus(articleId, isBookmarked)
+            Timber.d("Updated bookmark for article $articleId: $isBookmarked")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to toggle bookmark")
+            throw e
+        }
+    }
+
+    /**
+     * Get count of bookmarked articles.
+     */
+    suspend fun getBookmarkedCount(): Int {
+        return newsDao.getBookmarkedCount()
+    }
+
+    /**
      * Group entities into sections by header.
      */
     private fun groupEntitiesIntoSections(entities: List<NewsArticleEntity>): List<NewsSection> {

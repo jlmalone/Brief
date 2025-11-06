@@ -124,4 +124,37 @@ class NewsRepositoryImpl @Inject constructor(
             Timber.e(e, "Failed to clear cache")
         }
     }
+
+    /**
+     * Observe bookmarked news.
+     */
+    override fun observeBookmarkedNews(): Flow<List<NewsSection>> {
+        return localDataSource.observeBookmarkedNews()
+            .flowOn(ioDispatcher)
+    }
+
+    /**
+     * Toggle bookmark status for an article.
+     */
+    override suspend fun toggleBookmark(articleId: String, isBookmarked: Boolean) = withContext(ioDispatcher) {
+        try {
+            Timber.d("Toggling bookmark for article $articleId: $isBookmarked")
+            localDataSource.toggleBookmark(articleId, isBookmarked)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to toggle bookmark")
+            throw e
+        }
+    }
+
+    /**
+     * Get bookmarked count.
+     */
+    override suspend fun getBookmarkedCount(): Int = withContext(ioDispatcher) {
+        try {
+            localDataSource.getBookmarkedCount()
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to get bookmarked count")
+            0
+        }
+    }
 }

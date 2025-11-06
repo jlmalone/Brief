@@ -14,7 +14,7 @@ import com.techventus.wikipedianews.model.database.entity.NewsArticleEntity
     entities = [
         NewsArticleEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
