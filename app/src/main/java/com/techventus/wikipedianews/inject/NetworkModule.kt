@@ -1,4 +1,4 @@
-package com.techventus.wikipedianews.di
+package com.techventus.wikipedianews.inject
 
 import com.techventus.wikipedianews.BuildConfig
 import dagger.Module
