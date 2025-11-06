@@ -136,6 +136,28 @@ class NewsLocalDataSource @Inject constructor(
     }
 
     /**
+     * Search articles by query.
+     */
+    suspend fun searchArticles(query: String): List<NewsSection> {
+        if (query.isBlank()) {
+            return emptyList()
+        }
+        val entities = newsDao.searchArticles(query)
+        return groupEntitiesIntoSections(entities)
+    }
+
+    /**
+     * Observe search results as Flow.
+     */
+    fun observeSearchResults(query: String): Flow<List<NewsSection>> {
+        if (query.isBlank()) {
+            return kotlinx.coroutines.flow.flowOf(emptyList())
+        }
+        return newsDao.observeSearchResults(query)
+            .map { entities -> groupEntitiesIntoSections(entities) }
+    }
+
+    /**
      * Group entities into sections by header.
      */
     private fun groupEntitiesIntoSections(entities: List<NewsArticleEntity>): List<NewsSection> {

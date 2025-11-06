@@ -31,9 +31,16 @@ class NewsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<NewsUiState>(NewsUiState.Loading)
     val uiState: StateFlow<NewsUiState> = _uiState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
+
     init {
         Timber.d("NewsViewModel initialized")
         observeNews()
+        observeSearch()
         // Auto-refresh on init if no cached data
         refresh()
     }
@@ -126,6 +133,59 @@ class NewsViewModel @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e, "Failed to toggle bookmark")
             }
+        }
+    }
+
+    /**
+     * Update search query.
+     */
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    /**
+     * Toggle search mode.
+     */
+    fun toggleSearch() {
+        _isSearching.value = !_isSearching.value
+        if (!_isSearching.value) {
+            // Clear search when exiting search mode
+            _searchQuery.value = ""
+        }
+    }
+
+    /**
+     * Clear search.
+     */
+    fun clearSearch() {
+        _searchQuery.value = ""
+    }
+
+    /**
+     * Observe search results.
+     */
+    private fun observeSearch() {
+        viewModelScope.launch {
+            _searchQuery
+                .map { query -> query.trim() }
+                .collect { query ->
+                    if (query.isNotEmpty() && _isSearching.value) {
+                        Timber.d("Searching for: $query")
+                        try {
+                            val results = repository.searchArticles(query)
+                            if (results.isNotEmpty()) {
+                                _uiState.value = NewsUiState.Success(results)
+                            } else {
+                                _uiState.value = NewsUiState.Empty
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e, "Search failed")
+                        }
+                    } else if (!_isSearching.value) {
+                        // Back to normal news view
+                        // observeNews() is already running
+                    }
+                }
         }
     }
 }

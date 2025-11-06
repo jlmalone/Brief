@@ -72,4 +72,29 @@ interface NewsDao {
      */
     @Query("SELECT COUNT(*) FROM news_articles WHERE isBookmarked = 1")
     suspend fun getBookmarkedCount(): Int
+
+    /**
+     * Search articles by query in title, content, or section header.
+     * Returns articles matching the search query.
+     */
+    @Query("""
+        SELECT * FROM news_articles
+        WHERE title LIKE '%' || :query || '%'
+        OR htmlContent LIKE '%' || :query || '%'
+        OR sectionHeader LIKE '%' || :query || '%'
+        ORDER BY timestamp DESC
+    """)
+    suspend fun searchArticles(query: String): List<NewsArticleEntity>
+
+    /**
+     * Observe search results as Flow.
+     */
+    @Query("""
+        SELECT * FROM news_articles
+        WHERE title LIKE '%' || :query || '%'
+        OR htmlContent LIKE '%' || :query || '%'
+        OR sectionHeader LIKE '%' || :query || '%'
+        ORDER BY timestamp DESC
+    """)
+    fun observeSearchResults(query: String): Flow<List<NewsArticleEntity>>
 }

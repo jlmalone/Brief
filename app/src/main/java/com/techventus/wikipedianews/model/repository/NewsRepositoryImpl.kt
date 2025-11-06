@@ -157,4 +157,25 @@ class NewsRepositoryImpl @Inject constructor(
             0
         }
     }
+
+    /**
+     * Search articles by query.
+     */
+    override suspend fun searchArticles(query: String): List<NewsSection> = withContext(ioDispatcher) {
+        try {
+            Timber.d("Searching articles for query: $query")
+            localDataSource.searchArticles(query)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to search articles")
+            emptyList()
+        }
+    }
+
+    /**
+     * Observe search results.
+     */
+    override fun observeSearchResults(query: String): Flow<List<NewsSection>> {
+        return localDataSource.observeSearchResults(query)
+            .flowOn(ioDispatcher)
+    }
 }

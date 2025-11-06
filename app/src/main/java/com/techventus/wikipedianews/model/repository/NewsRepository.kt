@@ -70,4 +70,20 @@ interface NewsRepository {
      * @return Number of bookmarked articles
      */
     suspend fun getBookmarkedCount(): Int
+
+    /**
+     * Search articles by query.
+     *
+     * @param query Search query string
+     * @return List of news sections matching the query
+     */
+    suspend fun searchArticles(query: String): List<NewsSection>
+
+    /**
+     * Observe search results as a reactive Flow.
+     *
+     * @param query Search query string
+     * @return Flow of news sections matching the query
+     */
+    fun observeSearchResults(query: String): Flow<List<NewsSection>>
 }
