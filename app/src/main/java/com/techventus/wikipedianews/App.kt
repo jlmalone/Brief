@@ -29,6 +29,7 @@ class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
 
         // Initialize Timber in debug builds
         if (BuildConfig.DEBUG) {
@@ -46,4 +47,11 @@ class App : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(if (BuildConfig.DEBUG) android.util.Log.DEBUG else android.util.Log.ERROR)
             .build()
+
+    companion object {
+        private var instance: App? = null
+
+        @JvmStatic
+        fun getInstance(): App? = instance
+    }
 }

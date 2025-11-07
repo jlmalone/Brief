@@ -1,11 +1,9 @@
 package com.techventus.wikipedianews.inject
 
-import android.content.Context
 import com.techventus.wikipedianews.manager.PreferencesManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -21,12 +19,5 @@ object AppModule {
     @Singleton
     fun providePreferencesManager(): PreferencesManager {
         return PreferencesManager.getInstance()
-    }
-
-    @Provides
-    @Singleton
-    @ApplicationContext
-    fun provideApplicationContext(application: android.app.Application): Context {
-        return application.applicationContext
     }
 }

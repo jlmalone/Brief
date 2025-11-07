@@ -2,7 +2,7 @@ package com.techventus.wikipedianews.logging
 
 import android.content.Context
 import android.widget.Toast
-import com.techventus.wikipedianews.WikiApplication
+import com.techventus.wikipedianews.App
 
 /**
  * Created by josephmalone on 15-09-24.
@@ -37,7 +37,7 @@ object Toaster {
     @JvmStatic
     fun show(stringId: Int) {
         if (showToast) {
-            WikiApplication.getInstance()?.let {
+            App.getInstance()?.let {
                 Toast.makeText(it, stringId, Toast.LENGTH_LONG).show()
             }
         }

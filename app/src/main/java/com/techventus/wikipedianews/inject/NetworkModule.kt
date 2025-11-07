@@ -30,6 +30,14 @@ object NetworkModule {
             readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
 
+            // Add User-Agent header (required by Wikipedia)
+            addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .header("User-Agent", "Brief/1.0 (Android; Wikipedia News Reader)")
+                    .build()
+                chain.proceed(request)
+            }
+
             // Add logging interceptor in debug builds only
             if (BuildConfig.DEBUG) {
                 addInterceptor(

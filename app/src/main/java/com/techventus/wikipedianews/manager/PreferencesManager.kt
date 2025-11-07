@@ -2,7 +2,7 @@ package com.techventus.wikipedianews.manager
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.techventus.wikipedianews.WikiApplication
+import com.techventus.wikipedianews.App
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONException
 import org.json.JSONObject
@@ -11,7 +11,7 @@ class PreferencesManager private constructor() {
     private val mPreferences: SharedPreferences
 
     init {
-        val context = WikiApplication.getInstance()!!.applicationContext
+        val context = App.getInstance()!!.applicationContext
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     }
 
