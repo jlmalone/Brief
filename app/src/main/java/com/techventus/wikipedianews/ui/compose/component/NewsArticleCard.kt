@@ -45,6 +45,7 @@ fun NewsArticleCard(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val linkColor = MaterialTheme.colorScheme.primary
 
     Card(
         modifier = modifier
@@ -59,8 +60,8 @@ fun NewsArticleCard(
             modifier = Modifier.padding(16.dp)
         ) {
             // Parse HTML and display as formatted text
-            val formattedText = remember(article.htmlContent) {
-                parseHtmlToAnnotatedString(article.htmlContent)
+            val formattedText = remember(article.htmlContent, linkColor) {
+                parseHtmlToAnnotatedString(article.htmlContent, linkColor)
             }
 
             Text(
@@ -141,7 +142,10 @@ fun NewsArticleCard(
  * Parse HTML content to AnnotatedString for Compose.
  * This is a simplified parser - for production, consider using a library.
  */
-private fun parseHtmlToAnnotatedString(html: String): AnnotatedString {
+private fun parseHtmlToAnnotatedString(
+    html: String,
+    linkColor: androidx.compose.ui.graphics.Color
+): AnnotatedString {
     // Remove HTML from string for simple display
     // In production, use a proper HTML parser or library like Accompanist
     val plainText = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString()
@@ -151,10 +155,10 @@ private fun parseHtmlToAnnotatedString(html: String): AnnotatedString {
 
         // Check if text contains links (basic detection)
         if (html.contains("<a ")) {
-            // Style as clickable text
+            // Style as clickable text with theme-aware color
             addStyle(
                 style = SpanStyle(
-                    color = androidx.compose.ui.graphics.Color.Blue,
+                    color = linkColor,
                     textDecoration = TextDecoration.Underline
                 ),
                 start = 0,
