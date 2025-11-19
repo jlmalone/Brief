@@ -26,3 +26,8 @@ app/app-release.apk
 /.idea/kotlinc.xml
 /.idea/migrations.xml
 /.idea/AndroidProjectSystem.xml
+
+# Firebase
+google-services.json
+crashlytics.properties
+crashlytics-build.properties
