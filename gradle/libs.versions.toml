@@ -66,6 +66,10 @@ coroutinesTest = "1.8.0"
 ktlint = "12.1.0"
 detekt = "1.23.7"
 
+# Performance Monitoring
+firebase-bom = "33.5.1"
+leakcanary = "2.14"
+
 [libraries]
 # AndroidX Core
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -144,6 +148,13 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "junitExt" }
+
+# Performance Monitoring
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-perf = { module = "com.google.firebase:firebase-perf-ktx" }
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
