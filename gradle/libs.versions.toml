@@ -66,6 +66,9 @@ coroutinesTest = "1.8.0"
 ktlint = "12.1.0"
 detekt = "1.23.7"
 
+# Debug Tools
+leakcanary = "2.14"
+
 [libraries]
 # AndroidX Core
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -144,6 +147,9 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "junitExt" }
+
+# Debug Tools
+leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

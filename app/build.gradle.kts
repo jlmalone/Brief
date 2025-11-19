@@ -39,8 +39,19 @@ android {
             isDebuggable = true
         }
         release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("debug") // For now, use debug signing
+        }
+
+        create("benchmark") {
+            initWith(getByName("release"))
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
         }
     }
 
@@ -64,6 +75,21 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+
+        // Optimization flags
+        freeCompilerArgs += listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview"
+        )
+    }
+
+    // Enable resource optimization
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/versions/9/previous-compilation-data.bin"
+        }
     }
 
     testOptions {
@@ -138,6 +164,9 @@ dependencies {
     kspTest(libs.hilt.compiler)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
+
+    // Memory leak detection (debug only)
+    debugImplementation(libs.leakcanary)
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
