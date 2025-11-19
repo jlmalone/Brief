@@ -85,4 +85,5 @@
 	<string name="about">About</string>
 	<string name="open_source_licenses">Open Source Licenses</string>
 	<string name="privacy_policy">Privacy Policy</string>
+	<string name="widget_description">Shows latest news from Wikipedia</string>
 </resources>
