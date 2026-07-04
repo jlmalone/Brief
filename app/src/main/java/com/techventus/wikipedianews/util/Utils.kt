@@ -4,9 +4,6 @@ import android.content.Context
 import org.apache.commons.lang3.StringUtils
 import java.util.Locale
 
-/**
- * Created by josephmalone on 6/24/15.
- */
 object Utils {
     private val ROMAN_NUMERALS: Set<String> = setOf(
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"

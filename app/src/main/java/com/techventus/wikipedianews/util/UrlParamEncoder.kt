@@ -3,9 +3,6 @@ package com.techventus.wikipedianews.util
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-/**
- * Created by josephmalone on 15-07-14.
- */
 
 fun encode(input: String?): String {
     input ?: return ""

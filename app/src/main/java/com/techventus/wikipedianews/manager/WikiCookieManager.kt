@@ -7,9 +7,6 @@ import java.net.CookieManager
 import java.net.URI
 import java.util.HashMap
 
-/**
- * Created by josephmalone on 15-09-08.
- */
 class WikiCookieManager private constructor() : CookieManager() {
     private var mUpdated = false
     private var mAuthTokenInternal: String? = null

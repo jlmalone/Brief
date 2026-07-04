@@ -4,9 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-/**
- * Created by josephmalone on 6/15/15.
- */
 object Logger {
     // Prefix to help filtering of logcat for output from our app
     private const val PREFIX = "#WIKI# "

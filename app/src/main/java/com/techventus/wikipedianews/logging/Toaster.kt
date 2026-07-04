@@ -4,9 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import com.techventus.wikipedianews.App
 
-/**
- * Created by josephmalone on 15-09-24.
- */
 object Toaster {
     const val LENGTH_LONG = Toast.LENGTH_LONG
     const val LENGTH_SHORT = Toast.LENGTH_SHORT
